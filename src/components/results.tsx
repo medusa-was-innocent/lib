@@ -68,8 +68,15 @@ function Cover({ book }: { book: Book }) {
 
 type MenuItem = { label: string; sub: string; href: string; icon: React.ReactNode; tint: string };
 
-function DownloadMenu({ book }: { book: Book }) {
-  const [open, setOpen] = useState(false);
+function DownloadMenu({
+  book,
+  open,
+  setOpen,
+}: {
+  book: Book;
+  open: boolean;
+  setOpen: (o: boolean) => void;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -131,7 +138,7 @@ function DownloadMenu({ book }: { book: Book }) {
     <div className="relative" ref={ref}>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen(!open)}
         className="flex items-center gap-2 rounded-lg bg-moss px-4 py-2 text-sm font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:scale-95"
       >
         <IconDownload width={15} height={15} />
@@ -139,7 +146,7 @@ function DownloadMenu({ book }: { book: Book }) {
         <IconChevron width={13} height={13} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="animate-pop-in absolute right-0 top-full z-30 mt-2 w-[272px] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)]">
+        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[272px] max-w-[calc(100vw-2.5rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)] sm:left-auto sm:right-0">
           {items.map((it) => (
             <a
               key={it.label}
@@ -172,6 +179,8 @@ function DownloadMenu({ book }: { book: Book }) {
 /* ------------------------------------------------------------------ */
 
 function BookRow({ book, index, onToast }: { book: Book; index: number; onToast: (m: string) => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const copyCite = async () => {
     try {
       await navigator.clipboard.writeText(citeBook(book));
@@ -183,7 +192,9 @@ function BookRow({ book, index, onToast }: { book: Book; index: number; onToast:
 
   return (
     <li
-      className="row-in group relative grid grid-cols-[72px_1fr] gap-4 p-4 transition-colors duration-200 hover:bg-royal-soft/40 sm:grid-cols-[72px_1fr_auto] sm:gap-5 sm:p-5"
+      className={`row-in group relative grid grid-cols-[72px_1fr] gap-4 p-4 transition-colors duration-200 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-royal-soft/40 sm:grid-cols-[72px_1fr_auto] sm:gap-5 sm:p-5 ${
+        menuOpen ? "z-20 bg-royal-soft/40" : ""
+      }`}
       style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
     >
       <Cover book={book} />
@@ -224,7 +235,7 @@ function BookRow({ book, index, onToast }: { book: Book; index: number; onToast:
         </div>
       </div>
       <div className="col-span-2 flex items-center gap-2 sm:col-span-1 sm:flex-col sm:items-end sm:justify-between">
-        <DownloadMenu book={book} />
+        <DownloadMenu book={book} open={menuOpen} setOpen={setMenuOpen} />
         <button
           type="button"
           onClick={copyCite}
@@ -324,7 +335,7 @@ function ArticleRow({
 
   return (
     <li
-      className="row-in group grid grid-cols-1 gap-4 p-4 transition-colors duration-200 hover:bg-royal-soft/40 sm:grid-cols-[1fr_auto] sm:items-center sm:p-5"
+      className="row-in group grid grid-cols-1 gap-4 p-4 transition-colors duration-200 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-royal-soft/40 sm:grid-cols-[1fr_auto] sm:items-center sm:p-5"
       style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
     >
       <div className="min-w-0">
@@ -638,7 +649,7 @@ export function Results({
         )}
 
         {/* list */}
-        <div className="mt-6 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_10px_40px_rgba(12,31,49,0.07)]">
+        <div className="relative mt-6 rounded-2xl border border-line bg-card shadow-[0_10px_40px_rgba(12,31,49,0.07)]">
           {loading ? (
             <SkeletonRows />
           ) : error ? (
