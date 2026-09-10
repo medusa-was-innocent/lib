@@ -17,10 +17,12 @@ import {
 export function ModeTabs({
   mode,
   onChange,
+  dark = false,
   compact = false,
 }: {
   mode: Mode;
   onChange: (m: Mode) => void;
+  dark?: boolean;
   compact?: boolean;
 }) {
   const btn = (m: Mode, label: string, icon: React.ReactNode) => {
@@ -29,12 +31,14 @@ export function ModeTabs({
       <button
         type="button"
         onClick={() => onChange(m)}
-        className={`flex items-center gap-1.5 rounded-md font-semibold transition-colors duration-150 ${
-          compact ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm"
+        className={`flex items-center gap-1.5 rounded-full font-semibold transition-colors duration-150 ${
+          compact ? "px-3 py-1 text-xs" : "px-4 py-1.5 text-sm"
         } ${
           active
-            ? "bg-neon-cyan/15 border border-neon-cyan/40 text-neon-cyan"
-            : "text-chrome-dim hover:text-chrome border border-transparent"
+            ? "bg-acc text-ink-950 shadow-sm"
+            : dark
+              ? "text-[#9db2c7] hover:text-paper"
+              : "text-faint hover:text-ink-900"
         }`}
       >
         {icon}
@@ -43,9 +47,14 @@ export function ModeTabs({
     );
   };
   return (
-    <div className="inline-flex items-center rounded-lg p-1 panel" role="tablist">
-      {btn("books", "Books", <IconBook width={13} height={13} />)}
-      {btn("articles", "Articles", <IconArticle width={13} height={13} />)}
+    <div
+      className={`inline-flex items-center rounded-full p-1 ${
+        dark ? "border border-ink-600 bg-ink-800/80" : "border border-line bg-card shadow-sm"
+      }`}
+      role="tablist"
+    >
+      {btn("books", "Books", <IconBook width={14} height={14} />)}
+      {btn("articles", "Articles", <IconArticle width={14} height={14} />)}
     </div>
   );
 }
@@ -83,14 +92,14 @@ function CountUp({ to, label, sub }: { to: number; label: string; sub: string })
   }, [to]);
 
   return (
-    <div ref={ref} className="flex items-baseline gap-3 border-b border-white/5 py-2.5 last:border-0">
-      <span className="font-display text-2xl font-semibold leading-none text-chrome-bright">
+    <div ref={ref} className="flex items-baseline gap-3 border-b border-ink-700/70 py-3 last:border-0">
+      <span className="font-display text-3xl font-semibold leading-none text-paper">
         {val}
-        <span className="text-lg neon-cyan">M+</span>
+        <span className="text-xl text-acc">M+</span>
       </span>
       <span className="flex flex-col">
-        <span className="text-xs font-semibold text-chrome-bright">{label}</span>
-        <span className="font-mono text-[9px] uppercase tracking-widest text-chrome-dim">{sub}</span>
+        <span className="text-sm font-semibold text-paper/90">{label}</span>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-[#7f95ab]">{sub}</span>
       </span>
     </div>
   );
@@ -124,70 +133,77 @@ export function Masthead({
   onPerfMode: (v: boolean) => void;
 }) {
   return (
-    <header className="relative overflow-hidden bg-void text-chrome">
-      {/* Subtle grid (static, no animation) */}
-      {!perfMode && <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />}
+    <header className="relative overflow-hidden bg-ink-900 text-paper">
+      {/* Ambient glows */}
+      <div className="pointer-events-none absolute -left-32 -top-40 h-[480px] w-[480px] rounded-full bg-royal/25 blur-[130px]" />
+      <div className="pointer-events-none absolute -right-24 top-24 h-[380px] w-[380px] rounded-full bg-acc/12 blur-[120px]" />
+      <div className="pointer-events-none absolute inset-0 halftone opacity-[0.06]" />
 
       {/* Top bar */}
-      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <a href="#top" className="flex items-center gap-2.5">
-          <LogoMark size={32} />
-          <span className="font-display text-xl font-semibold tracking-tight text-holo">
-            Bibliothēkē
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8">
+        <a href="#top" className="flex items-center gap-3">
+          <LogoMark size={34} />
+          <span className="font-display text-2xl font-semibold tracking-tight">
+            <span className="italic text-acc">Bibliothēkē</span>
           </span>
         </a>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-chrome-dim md:flex">
-          <a href="#catalog" className="transition-colors hover:text-neon-cyan">Catalog</a>
-          <a href="#how" className="transition-colors hover:text-neon-cyan">How it works</a>
+        <nav className="hidden items-center gap-7 text-sm font-medium text-[#a9bccf] md:flex">
+          <a href="#catalog" className="transition-colors hover:text-acc">Catalog</a>
+          <a href="#how" className="transition-colors hover:text-acc">How it works</a>
+          <a href="#run" className="transition-colors hover:text-acc">Run the original</a>
           <button
             type="button"
             onClick={() => onPerfMode(!perfMode)}
             title={perfMode ? "Disable performance mode" : "Enable performance mode"}
-            className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+            className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest transition-colors ${
               perfMode
-                ? "border-neon-lime/40 bg-neon-lime/10 text-neon-lime"
-                : "border-panel-border text-chrome-dim hover:border-neon-cyan hover:text-neon-cyan"
+                ? "border-moss/40 bg-moss/10 text-moss"
+                : "border-ink-600 text-[#7f95ab] hover:border-acc hover:text-acc"
             }`}
           >
             <IconBolt width={11} height={11} />
             {perfMode ? "Perf On" : "Perf"}
           </button>
         </nav>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
+          <span className="hidden items-center gap-2 rounded-full border border-ink-600 bg-ink-800/70 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-[#9db2c7] sm:flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-moss" />
+            sources online
+          </span>
           <a
             href="https://github.com/Devanshu-17/zLibrary"
             target="_blank"
             rel="noreferrer"
             aria-label="Original repository on GitHub"
-            className="rounded-md border border-panel-border p-2 text-chrome-dim transition-colors hover:border-neon-cyan hover:text-neon-cyan"
+            className="rounded-lg border border-ink-600 bg-ink-800/70 p-2 text-[#c6d4e2] transition-colors hover:border-acc hover:text-acc"
           >
-            <IconGithub width={15} height={15} />
+            <IconGithub width={16} height={16} />
           </a>
         </div>
       </div>
 
       {/* Main grid */}
-      <div className="relative mx-auto grid max-w-7xl gap-10 px-5 pb-12 pt-6 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pt-10">
+      <div className="relative mx-auto grid max-w-7xl gap-12 px-5 pb-14 pt-8 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:pt-12">
         <div>
-          <p className="row-in font-mono text-[10px] uppercase tracking-[0.3em] text-neon-cyan" style={{ animationDelay: "60ms" }}>
-            Digital Archive Console
+          <p className="row-in font-mono text-[11px] uppercase tracking-[0.3em] text-acc" style={{ animationDelay: "60ms" }}>
+            Open catalog console · books & articles
           </p>
           <h1
-            className="row-in mt-3 font-display text-[2.4rem] font-semibold leading-[1.05] tracking-tight sm:text-5xl"
+            className="row-in mt-4 font-display text-[2.6rem] font-semibold leading-[1.04] tracking-tight sm:text-6xl"
             style={{ animationDelay: "140ms" }}
           >
-            <span className="text-chrome">Every book on Earth,</span>
+            Every book on Earth,
             <br />
-            <span className="text-holo">one search box.</span>
+            <span className="italic text-acc">one search box.</span>
           </h1>
-          <p className="row-in mt-4 max-w-xl text-sm leading-relaxed text-chrome-dim" style={{ animationDelay: "220ms" }}>
-            A working browser rebuild of <span className="font-mono text-xs text-chrome">Devanshu-17/zLibrary</span> —
+          <p className="row-in mt-5 max-w-xl text-[15px] leading-relaxed text-[#a9bccf]" style={{ animationDelay: "220ms" }}>
+            A working browser rebuild of <span className="font-mono text-[13px] text-paper/80">Devanshu-17/zLibrary</span> —
             search 20M+ book records and 150M+ article records, then jump to real download sources.
           </p>
 
           {/* Search */}
           <form
-            className="row-in mt-6 flex flex-col gap-2.5 sm:flex-row sm:items-stretch"
+            className="row-in mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch"
             style={{ animationDelay: "300ms" }}
             onSubmit={(e) => {
               e.preventDefault();
@@ -195,39 +211,39 @@ export function Masthead({
               if (q) onSearch(q);
             }}
           >
-            <div className="flex flex-1 items-center gap-2.5 rounded-lg border border-panel-border bg-void-2 px-3 transition-colors focus-within:border-neon-cyan/40">
-              <IconSearch className="shrink-0 text-chrome-dim" width={17} height={17} />
+            <div className="flex flex-1 items-center gap-3 rounded-xl border border-ink-600 bg-ink-950/70 px-4 shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-colors focus-within:border-acc">
+              <IconSearch className="shrink-0 text-[#7f95ab]" width={19} height={19} />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(e) => onQuery(e.target.value)}
-                placeholder={mode === "books" ? "Title, author, ISBN…" : "Paper title, DOI…"}
-                className="h-[46px] w-full bg-transparent text-sm text-chrome-bright placeholder-chrome-dim/60 outline-none"
+                placeholder={mode === "books" ? "Title, author, ISBN, subject…" : "Paper title, topic, DOI…"}
+                className="h-[52px] w-full bg-transparent text-[15px] text-paper placeholder-[#5f7590] outline-none"
                 aria-label="Search the catalog"
               />
-              <kbd className="hidden shrink-0 rounded border border-panel-border bg-void-3 px-1.5 py-0.5 font-mono text-[9px] text-chrome-dim sm:block">
+              <kbd className="hidden shrink-0 rounded border border-ink-600 bg-ink-800 px-1.5 py-0.5 font-mono text-[10px] text-[#9db2c7] sm:block">
                 /
               </kbd>
             </div>
             <button
               type="submit"
-              className="btn-click group flex h-[46px] shrink-0 items-center justify-center gap-2 rounded-lg bg-neon-cyan px-6 text-sm font-bold text-void transition-colors hover:bg-[#33ecff]"
+              className="btn-click group flex h-[52px] shrink-0 items-center justify-center gap-2 rounded-xl bg-acc px-7 text-[15px] font-bold text-ink-950 shadow-[0_10px_26px_rgba(240,163,47,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#ffbd52] active:translate-y-0"
             >
               Search {mode === "books" ? "books" : "articles"}
-              <IconArrowRight width={15} height={15} />
+              <IconArrowRight width={17} height={17} className="transition-transform group-hover:translate-x-1" />
             </button>
           </form>
 
-          <div className="row-in mt-3 flex flex-wrap items-center gap-2" style={{ animationDelay: "380ms" }}>
-            <ModeTabs mode={mode} onChange={onMode} />
-            <span className="mx-1 hidden h-4 w-px bg-white/10 sm:block" />
-            <span className="font-mono text-[9px] uppercase tracking-widest text-chrome-dim">try</span>
+          <div className="row-in mt-4 flex flex-wrap items-center gap-2" style={{ animationDelay: "380ms" }}>
+            <ModeTabs mode={mode} onChange={onMode} dark />
+            <span className="mx-1 hidden h-4 w-px bg-ink-600 sm:block" />
+            <span className="font-mono text-[10px] uppercase tracking-widest text-[#7f95ab]">try</span>
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => onSearch(s)}
-                className="btn-click rounded-md border border-panel-border px-2.5 py-1 text-xs text-chrome-dim transition-colors hover:border-neon-cyan hover:text-neon-cyan"
+                className="btn-click rounded-full border border-ink-600 bg-ink-800/60 px-3 py-1 text-xs text-[#b9c9da] transition-colors hover:border-acc hover:text-acc"
               >
                 {s}
               </button>
@@ -235,16 +251,16 @@ export function Masthead({
           </div>
 
           {recent.length > 0 && (
-            <div className="row-in mt-2.5 flex flex-wrap items-center gap-2" style={{ animationDelay: "440ms" }}>
-              <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-widest text-chrome-dim">
-                <IconClock width={11} height={11} /> recent
+            <div className="row-in mt-3 flex flex-wrap items-center gap-2" style={{ animationDelay: "440ms" }}>
+              <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-[#7f95ab]">
+                <IconClock width={12} height={12} /> recent
               </span>
               {recent.map((r) => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => onSearch(r)}
-                  className="btn-click rounded-md border border-panel-border px-2.5 py-1 text-xs text-chrome-dim transition-colors hover:border-neon-magenta hover:text-neon-magenta"
+                  className="btn-click rounded-full border border-royal/40 bg-royal/15 px-3 py-1 text-xs text-[#a9cbe8] transition-colors hover:border-acc hover:text-acc"
                 >
                   {r}
                 </button>
@@ -253,9 +269,9 @@ export function Masthead({
                 type="button"
                 onClick={onClearRecent}
                 aria-label="Clear recent searches"
-                className="rounded-md p-1 text-chrome-dim transition-colors hover:text-neon-magenta"
+                className="rounded-full p-1 text-[#7f95ab] transition-colors hover:text-rust"
               >
-                <IconX width={12} height={12} />
+                <IconX width={13} height={13} />
               </button>
             </div>
           )}
@@ -263,7 +279,7 @@ export function Masthead({
 
         {/* Right column */}
         <div className="row-in relative" style={{ animationDelay: "360ms" }}>
-          <div className="rounded-lg panel-strong px-4 py-2">
+          <div className="rounded-2xl border border-ink-700 bg-ink-800/50 px-5 py-2 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
             <CountUp to={20} label="book records indexed" sub="open library" />
             <CountUp to={150} label="article metadata records" sub="crossref" />
             <CountUp to={44} label="free archived texts" sub="internet archive" />
@@ -295,14 +311,16 @@ export function StickyBar({
 }) {
   return (
     <div
-      className={`fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-void/95 transition-transform duration-200 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-ink-700 bg-ink-950/95 transition-transform duration-300 ${
         visible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-2.5 px-5 py-2 sm:px-8">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-5 py-2.5 sm:px-8">
         <a href="#top" className="hidden items-center gap-2 sm:flex">
-          <LogoMark size={24} />
-          <span className="font-display text-base font-semibold text-holo">Bibliothēkē</span>
+          <LogoMark size={26} />
+          <span className="font-display text-lg font-semibold">
+            <span className="italic text-acc">Bibliothēkē</span>
+          </span>
         </a>
         <form
           className="flex flex-1 items-center gap-2"
@@ -312,25 +330,25 @@ export function StickyBar({
             if (q) onSearch(q);
           }}
         >
-          <div className="flex h-8 flex-1 items-center gap-2 rounded-md border border-panel-border bg-void-2 px-2.5 transition-colors focus-within:border-neon-cyan/40">
-            <IconSearch width={13} height={13} className="text-chrome-dim" />
+          <div className="flex h-9 flex-1 items-center gap-2 rounded-lg border border-ink-600 bg-ink-900 px-3 transition-colors focus-within:border-acc">
+            <IconSearch width={14} height={14} className="text-[#7f95ab]" />
             <input
               ref={stickyRef}
               value={query}
               onChange={(e) => onQuery(e.target.value)}
               placeholder="Search…"
-              className="h-full w-full bg-transparent text-xs text-chrome-bright placeholder-chrome-dim/60 outline-none"
+              className="h-full w-full bg-transparent text-sm text-paper placeholder-[#5f7590] outline-none"
               aria-label="Search"
             />
           </div>
           <button
             type="submit"
-            className="btn-click h-8 rounded-md bg-neon-cyan px-3 text-xs font-bold text-void"
+            className="btn-click h-9 rounded-lg bg-acc px-4 text-sm font-bold text-ink-950 transition-colors hover:bg-[#ffbd52]"
           >
             Go
           </button>
         </form>
-        <ModeTabs mode={mode} onChange={onMode} compact />
+        <ModeTabs mode={mode} onChange={onMode} dark compact />
       </div>
     </div>
   );

@@ -89,11 +89,11 @@ export const IconStamp = (p: P) => (
   <svg {...base(p)}><rect x="3" y="13" width="18" height="4" rx="1" /><path d="M12 3v10M8 7h8" /><path d="M5 17v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3" /></svg>
 );
 
-/** Bibliothēkē mark — Greek beta on a dark tile with neon border */
+/** Bibliothēkē mark — Greek beta on a warm orange tile */
 export const LogoMark = ({ size = 34 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
-    <rect width="32" height="32" rx="7" fill="#0a0c1a" stroke="#00e5ff" strokeWidth="1" />
-    <text x="16" y="22" textAnchor="middle" fontFamily="Georgia, serif" fontSize="18" fontWeight="700" fill="#00e5ff">
+    <rect width="32" height="32" rx="7" fill="#f0a32f" />
+    <text x="16" y="22" textAnchor="middle" fontFamily="Georgia, serif" fontSize="18" fontWeight="700" fill="#0c1f31">
       β
     </text>
   </svg>

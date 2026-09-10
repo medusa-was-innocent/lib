@@ -240,7 +240,7 @@ export default function App() {
   /* ---------- Render ---------- */
 
   return (
-    <div id="top" className={`min-h-screen bg-void font-body text-chrome ${perfMode ? "perf-mode" : ""}`}>
+    <div id="top" className={`min-h-screen bg-paper font-body text-ink-900 ${perfMode ? "perf-mode" : ""}`}>
       <Masthead
         mode={mode}
         onMode={switchMode}
@@ -295,9 +295,9 @@ export default function App() {
         <div
           key={toast.id}
           role="status"
-          className="animate-toast-in fixed bottom-4 left-4 z-[80] flex items-center gap-2.5 rounded-lg border border-neon-cyan/30 bg-void-2 px-3.5 py-2.5 text-xs font-semibold text-chrome-bright shadow-[0_0_20px_rgba(0,229,255,0.15)] sm:bottom-6 sm:left-6"
+          className="animate-toast-in fixed bottom-4 left-4 z-[80] flex items-center gap-2.5 rounded-lg border border-ink-700 bg-ink-900 px-3.5 py-2.5 text-xs font-semibold text-paper shadow-[0_18px_50px_rgba(0,0,0,0.45)] sm:bottom-6 sm:left-6"
         >
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neon-lime/20 text-neon-lime">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-moss/20 text-moss">
             <IconCheck width={11} height={11} />
           </span>
           {toast.msg}

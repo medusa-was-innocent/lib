@@ -20,25 +20,25 @@ export function LibraryCard({ count, lastAction }: { count: number; lastAction: 
 
   return (
     <div className="fixed bottom-4 right-4 z-40 hidden sm:block">
-      <div className="relative w-[180px] rounded-lg border border-neon-cyan/30 bg-void-2 p-3 shadow-[0_0_20px_rgba(0,229,255,0.1)]">
+      <div className="relative w-[180px] rounded-lg border border-ink-700 bg-ink-900 p-3 shadow-[0_10px_30px_rgba(12,31,49,0.4)]">
         {/* Header */}
-        <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+        <div className="flex items-center gap-2 border-b border-ink-700 pb-2">
           <LogoMark size={24} />
           <div className="min-w-0 flex-1">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-neon-cyan">Library Card</p>
-            <p className="font-display text-xs font-semibold text-chrome-bright">Bibliothēkē</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-acc">Library Card</p>
+            <p className="font-display text-xs font-semibold text-paper">Bibliothēkē</p>
           </div>
         </div>
 
         {/* Stats */}
         <div className="mt-2 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[9px] uppercase tracking-wide text-chrome-dim">Books saved</span>
-            <span className="font-mono text-sm font-bold neon-lime">{count}</span>
+            <span className="font-mono text-[9px] uppercase tracking-wide text-[#7f95ab]">Books saved</span>
+            <span className="font-mono text-sm font-bold text-moss">{count}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[9px] uppercase tracking-wide text-chrome-dim">Status</span>
-            <span className="font-mono text-[10px] font-semibold text-chrome-bright">Active</span>
+            <span className="font-mono text-[9px] uppercase tracking-wide text-[#7f95ab]">Status</span>
+            <span className="font-mono text-[10px] font-semibold text-paper">Active</span>
           </div>
         </div>
 
@@ -48,7 +48,7 @@ export function LibraryCard({ count, lastAction }: { count: number; lastAction: 
             key={stampKey}
             className="stamp-anim pointer-events-none absolute inset-0 flex items-center justify-center"
           >
-            <div className="rounded border-2 border-neon-magenta px-3 py-1 font-mono text-sm font-bold uppercase tracking-widest text-neon-magenta">
+            <div className="rounded border-2 border-acc px-3 py-1 font-mono text-sm font-bold uppercase tracking-widest text-acc">
               {stamp}
             </div>
           </div>

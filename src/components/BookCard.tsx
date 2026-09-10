@@ -3,6 +3,7 @@ import type { Book } from "../lib/api";
 import {
   annasUrl,
   archiveUrl,
+  citeBook,
   googleBooksUrl,
   googleSearchUrl,
   olUrl,
@@ -21,8 +22,6 @@ import {
   IconSearch,
   IconSparkle,
 } from "./icons";
-import { useReducedMotion } from "../lib/perf";
-import { citeBook } from "../lib/api";
 
 /* ---------- Cover with lazy loading + fallback ---------- */
 
@@ -32,7 +31,7 @@ function Cover({ book }: { book: Book }) {
   const showImg = !!book.cover && !failed;
 
   return (
-    <div className="book-shake relative h-[110px] w-[76px] shrink-0 overflow-hidden rounded-[4px] bg-void-4 ring-1 ring-white/10">
+    <div className="book-shake relative h-[110px] w-[76px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
       {showImg ? (
         <img
           src={`https://covers.openlibrary.org/b/id/${book.cover}-S.jpg`}
@@ -44,9 +43,9 @@ function Cover({ book }: { book: Book }) {
           className={`h-full w-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
       ) : (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-void-3 to-void-5">
-          <span className="font-display text-3xl font-semibold neon-cyan">{book.title.charAt(0)}</span>
-          <span className="px-1.5 text-center font-mono text-[7px] uppercase leading-tight tracking-wider text-chrome-dim">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-ink-700 to-ink-950">
+          <span className="font-display text-3xl font-semibold text-acc">{book.title.charAt(0)}</span>
+          <span className="px-1.5 text-center font-mono text-[7px] uppercase leading-tight tracking-wider text-paper/60">
             {book.title.slice(0, 30)}
           </span>
         </div>
@@ -123,14 +122,14 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="btn-click flex items-center gap-2 rounded-lg bg-neon-lime px-3 py-1.5 text-xs font-bold text-void"
+        className="btn-click flex items-center gap-2 rounded-lg bg-moss px-3 py-1.5 text-xs font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:scale-95"
       >
         <IconDownload width={13} height={13} />
         {book.ia.length > 0 ? "Download" : "Sources"}
         <IconChevron width={11} height={11} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[260px] max-w-[calc(100vw-2rem)] rounded-lg panel-strong p-1.5 sm:left-auto sm:right-0">
+        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[260px] max-w-[calc(100vw-2rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)] sm:left-auto sm:right-0">
           {items.map((it) => (
             <a
               key={it.label}
@@ -138,18 +137,18 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
               target="_blank"
               rel="noreferrer"
               onClick={() => setOpen(false)}
-              className="group/item flex items-start gap-2.5 rounded-md px-2.5 py-2 transition-colors hover:bg-white/5"
+              className="group/item flex items-start gap-2.5 rounded-lg px-2.5 py-2 transition-colors hover:bg-royal-soft/60"
             >
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded bg-void-4 text-chrome-dim">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-royal-soft text-royal">
                 {it.icon}
               </span>
               <span className="min-w-0">
-                <span className="block text-[12px] font-semibold text-chrome-bright group-hover/item:text-neon-cyan">
+                <span className="block text-[12px] font-semibold text-ink-900 group-hover/item:text-royal-deep">
                   {it.label}
                 </span>
-                <span className="block truncate font-mono text-[9px] text-chrome-dim">{it.sub}</span>
+                <span className="block truncate font-mono text-[9px] text-faint">{it.sub}</span>
               </span>
-              <IconExternal width={11} height={11} className="ml-auto mt-1 shrink-0 text-chrome-dim opacity-0 transition-opacity group-hover/item:opacity-100" />
+              <IconExternal width={11} height={11} className="ml-auto mt-1 shrink-0 text-faint opacity-0 transition-opacity group-hover/item:opacity-100" />
             </a>
           ))}
         </div>
@@ -160,12 +159,117 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
 
 /* ---------- Similar books section ---------- */
 
+function SimilarBookCard({ book }: { book: Book }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [menuOpen]);
+
+  const items: MenuItem[] = [
+    {
+      label: "Google Search",
+      sub: "web results with author",
+      href: googleSearchUrl(book),
+      icon: <IconSearch width={12} height={12} />,
+    },
+    {
+      label: "Google Books",
+      sub: "preview & publisher links",
+      href: googleBooksUrl(book),
+      icon: <IconBook width={12} height={12} />,
+    },
+    {
+      label: "Anna's Archive",
+      sub: "shadow-library aggregator",
+      href: annasUrl(book),
+      icon: <IconGlobe width={12} height={12} />,
+    },
+    {
+      label: "Z-Library",
+      sub: "z-library.sk portal",
+      href: zLibraryUrl(book),
+      icon: <IconExternal width={12} height={12} />,
+    },
+    {
+      label: "Open Library",
+      sub: "borrow & preview editions",
+      href: olUrl(book.id),
+      icon: <IconBook width={12} height={12} />,
+    },
+  ];
+
+  return (
+    <div className="relative flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)]">
+      <div className="relative h-[90px] w-full overflow-hidden rounded bg-ink-800">
+        {book.cover ? (
+          <img
+            src={`https://covers.openlibrary.org/b/id/${book.cover}-S.jpg`}
+            alt={book.title}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-950">
+            <span className="font-display text-xl font-semibold text-acc">{book.title.charAt(0)}</span>
+          </div>
+        )}
+      </div>
+      <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-ink-900">
+        {book.title}
+      </p>
+      {book.authors[0] && (
+        <p className="truncate text-[9px] text-faint">{book.authors[0]}</p>
+      )}
+      {/* Compact download menu */}
+      <div className="relative mt-1" ref={ref}>
+        <button
+          type="button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="btn-click flex w-full items-center justify-center gap-1 rounded-md border border-line bg-card px-2 py-1 text-[9px] font-semibold text-faint transition-colors hover:border-acc hover:text-acc"
+        >
+          <IconDownload width={10} height={10} />
+          Download
+          <IconChevron width={9} height={9} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+        </button>
+        {menuOpen && (
+          <div className="animate-pop-in absolute left-0 top-full z-20 mt-1 w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]">
+            {items.map((it) => (
+              <a
+                key={it.label}
+                href={it.href}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className="group/item flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-royal-soft/60"
+              >
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-royal-soft text-royal">
+                  {it.icon}
+                </span>
+                <span className="text-[10px] font-semibold text-ink-900 group-hover/item:text-royal-deep">
+                  {it.label}
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => void }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const abortRef = useRef<AbortController | null>(null);
-  const reduced = useReducedMotion();
 
   const toggle = async () => {
     if (!open) {
@@ -193,11 +297,11 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
   };
 
   return (
-    <div className="mt-3 border-t border-white/5 pt-3">
+    <div className="mt-3 border-t border-line pt-3">
       <button
         type="button"
         onClick={toggle}
-        className="btn-click flex items-center gap-2 rounded-md border border-panel-border px-2.5 py-1 text-[11px] font-semibold text-chrome-dim transition-colors hover:border-neon-magenta hover:text-neon-magenta focus-ring"
+        className="btn-click flex items-center gap-2 rounded-lg border border-line bg-card px-2.5 py-1 text-[11px] font-semibold text-faint transition-all hover:border-acc hover:text-acc-deep focus-ring"
       >
         <IconSparkle width={11} height={11} />
         {open ? "Hide similar" : "More Like This"}
@@ -215,41 +319,11 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
               </div>
             ))
           ) : books.length === 0 ? (
-            <p className="col-span-full py-3 text-center font-mono text-[10px] text-chrome-dim">
+            <p className="col-span-full py-3 text-center font-mono text-[10px] text-faint">
               No similar books found for this seed.
             </p>
           ) : (
-            books.map((b) => (
-              <a
-                key={b.id}
-                href={olUrl(b.id)}
-                target="_blank"
-                rel="noreferrer"
-                className="group/sim flex flex-col gap-1 rounded border border-panel-border p-1.5 transition-colors hover:border-neon-magenta focus-ring"
-              >
-                <div className="relative h-[90px] w-full overflow-hidden rounded bg-void-4">
-                  {b.cover ? (
-                    <img
-                      src={`https://covers.openlibrary.org/b/id/${b.cover}-S.jpg`}
-                      alt={b.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-void-3 to-void-5">
-                      <span className="font-display text-xl font-semibold neon-magenta">{b.title.charAt(0)}</span>
-                    </div>
-                  )}
-                </div>
-                <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-chrome-bright group-hover/sim:text-neon-magenta">
-                  {b.title}
-                </p>
-                {b.authors[0] && (
-                  <p className="truncate text-[9px] text-chrome-dim">{b.authors[0]}</p>
-                )}
-              </a>
-            ))
+            books.map((b) => <SimilarBookCard key={b.id} book={b} />)
           )}
         </div>
       )}
@@ -273,7 +347,6 @@ export function BookCard({
   onToggleSave: (b: Book) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const reduced = useReducedMotion();
 
   const copyCite = async () => {
     try {
@@ -286,18 +359,20 @@ export function BookCard({
 
   return (
     <li
-      className="book-lift card-contain row-in group relative grid grid-cols-[76px_1fr] gap-4 rounded-lg border border-panel-border p-4 transition-colors hover:border-neon-cyan/40 sm:grid-cols-[76px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-neon-cyan/40"
+      className={`book-lift card-contain row-in group relative grid grid-cols-[76px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[76px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
+        menuOpen ? "z-20" : ""
+      }`}
       style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
     >
       <Cover book={book} />
       <div className="min-w-0">
-        <h3 className="font-display text-[16px] font-semibold leading-snug text-chrome-bright transition-colors group-hover:text-neon-cyan">
+        <h3 className="font-display text-[16px] font-semibold leading-snug text-ink-900 transition-colors group-hover:text-royal-deep">
           {book.title}
         </h3>
         {book.authors.length > 0 && (
-          <p className="mt-0.5 text-sm font-medium text-chrome-dim">{book.authors.slice(0, 4).join(", ")}</p>
+          <p className="mt-0.5 text-sm font-medium text-body">{book.authors.slice(0, 4).join(", ")}</p>
         )}
-        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-wide text-chrome-dim/70">
+        <p className="mt-1.5 font-mono text-[10px] uppercase tracking-wide text-faint">
           {book.year ? book.year : "date n.d."}
           {book.publisher ? ` · ${book.publisher}` : ""}
           {book.pages ? ` · ${book.pages} p.` : ""}
@@ -305,17 +380,17 @@ export function BookCard({
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           {book.ebook === "public" && (
-            <span className="rounded bg-neon-lime/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-neon-lime">
+            <span className="rounded-md bg-moss-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-moss">
               public-domain
             </span>
           )}
           {book.ebook === "borrowable" && (
-            <span className="rounded bg-neon-cyan/10 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-neon-cyan">
+            <span className="rounded-md bg-royal-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-royal">
               borrowable
             </span>
           )}
           {book.ia.length > 0 && (
-            <span className="rounded bg-void-4 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-chrome-dim">
+            <span className="rounded-md bg-ink-900/5 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wide text-ink-600">
               on archive.org
             </span>
           )}
@@ -330,10 +405,10 @@ export function BookCard({
             type="button"
             onClick={() => onToggleSave(book)}
             title={isSaved ? "Remove from library" : "Save to library"}
-            className={`btn-click flex h-8 w-8 items-center justify-center rounded border transition-colors focus-ring ${
+            className={`btn-click flex h-8 w-8 items-center justify-center rounded-lg border transition-all focus-ring ${
               isSaved
-                ? "border-neon-magenta bg-neon-magenta/10 text-neon-magenta"
-                : "border-panel-border text-chrome-dim hover:border-neon-magenta hover:text-neon-magenta"
+                ? "border-acc bg-acc-soft text-acc-deep"
+                : "border-line text-faint hover:border-acc hover:text-acc-deep"
             }`}
           >
             <IconSave width={13} height={13} />
@@ -342,7 +417,7 @@ export function BookCard({
             type="button"
             onClick={copyCite}
             title="Copy citation"
-            className="btn-click flex h-8 w-8 items-center justify-center rounded border border-panel-border text-chrome-dim transition-colors hover:border-neon-cyan hover:text-neon-cyan focus-ring"
+            className="btn-click flex h-8 w-8 items-center justify-center rounded-lg border border-line text-faint transition-all hover:border-royal hover:text-royal focus-ring"
           >
             <IconCopy width={13} height={13} />
           </button>
