@@ -84,82 +84,109 @@ export function playSaveSound(): void {
   osc.stop(now + 0.26);
 }
 
-/* ---------- Ambient library music (Web Audio API) ---------- */
+/* ---------- Melodic library music (Web Audio API) ---------- */
 
-let ambientNodes: {
-  oscillators: OscillatorNode[];
-  gains: GainNode[];
-  masterGain: GainNode;
-  lfos: OscillatorNode[];
-} | null = null;
+let melodyInterval: number | null = null;
+let melodyGain: GainNode | null = null;
+let melodyTimeout: ReturnType<typeof setTimeout> | null = null;
 
-/** Start ambient library pad — warm, evolving tone. */
+// Simple pentatonic melody (C major pentatonic: C, D, E, G, A)
+const MELODY_NOTES = [
+  261.63, // C4
+  293.66, // D4
+  329.63, // E4
+  392.00, // G4
+  440.00, // A4
+  523.25, // C5
+  587.33, // D5
+  659.25, // E5
+];
+
+// Melody pattern (indices into MELODY_NOTES)
+const MELODY_PATTERN = [0, 2, 4, 5, 4, 2, 3, 5, 7, 5, 4, 2, 0, 2, 4, 3];
+let melodyIndex = 0;
+
+/** Play a single note with envelope */
+function playNote(freq: number, duration: number, time: number): void {
+  const c = getCtx();
+  if (!c || !melodyGain) return;
+
+  const osc = c.createOscillator();
+  const noteGain = c.createGain();
+
+  osc.type = "sine";
+  osc.frequency.value = freq;
+
+  // ADSR envelope
+  noteGain.gain.setValueAtTime(0, time);
+  noteGain.gain.linearRampToValueAtTime(0.15, time + 0.02); // Attack
+  noteGain.gain.linearRampToValueAtTime(0.1, time + 0.1); // Decay
+  noteGain.gain.setValueAtTime(0.1, time + duration - 0.05); // Sustain
+  noteGain.gain.linearRampToValueAtTime(0, time + duration); // Release
+
+  osc.connect(noteGain).connect(melodyGain);
+  osc.start(time);
+  osc.stop(time + duration);
+}
+
+/** Start melodic library music */
 export function startAmbient(): void {
   const c = getCtx();
-  if (!c || ambientNodes) return;
+  if (!c || melodyInterval) return;
   if (c.state === "suspended") {
     c.resume().catch(() => {});
   }
 
-  const masterGain = c.createGain();
-  masterGain.gain.value = 0;
-  masterGain.connect(c.destination);
-
-  // Warm pad: multiple detuned sine/triangle oscillators
-  const freqs = [110, 164.81, 220, 329.63]; // A2, E3, A3, E4
-  const oscillators: OscillatorNode[] = [];
-  const gains: GainNode[] = [];
-  const lfos: OscillatorNode[] = [];
-
-  freqs.forEach((freq, i) => {
-    const osc = c.createOscillator();
-    osc.type = i % 2 === 0 ? "sine" : "triangle";
-    osc.frequency.value = freq;
-
-    const gain = c.createGain();
-    gain.gain.value = 0.08;
-
-    // LFO for gentle volume modulation
-    const lfo = c.createOscillator();
-    lfo.type = "sine";
-    lfo.frequency.value = 0.1 + i * 0.05; // very slow
-    const lfoGain = c.createGain();
-    lfoGain.gain.value = 0.03;
-    lfo.connect(lfoGain).connect(gain.gain);
-
-    osc.connect(gain).connect(masterGain);
-    osc.start();
-    lfo.start();
-
-    oscillators.push(osc);
-    gains.push(gain);
-    lfos.push(lfo);
-  });
+  // Master gain for melody
+  melodyGain = c.createGain();
+  melodyGain.gain.value = 0;
+  melodyGain.connect(c.destination);
 
   // Fade in
-  masterGain.gain.linearRampToValueAtTime(0.15, c.currentTime + 2);
+  melodyGain.gain.linearRampToValueAtTime(0.8, c.currentTime + 0.5);
 
-  ambientNodes = { oscillators, gains, masterGain, lfos };
+  melodyIndex = 0;
+
+  // Schedule notes
+  const playNextNote = () => {
+    if (!melodyGain || !c) return;
+    
+    const noteIndex = MELODY_PATTERN[melodyIndex % MELODY_PATTERN.length];
+    const freq = MELODY_NOTES[noteIndex];
+    const duration = 0.4;
+    
+    playNote(freq, duration, c.currentTime);
+    
+    melodyIndex++;
+    
+    // Schedule next note
+    melodyTimeout = setTimeout(playNextNote, 450);
+  };
+
+  playNextNote();
 }
 
-/** Stop ambient music with fade out. */
+/** Stop melodic music with fade out */
 export function stopAmbient(): void {
   const c = getCtx();
-  if (!c || !ambientNodes) return;
+  if (!c || !melodyGain) return;
 
-  const { oscillators, masterGain, lfos } = ambientNodes;
+  // Clear scheduled notes
+  if (melodyTimeout) {
+    clearTimeout(melodyTimeout);
+    melodyTimeout = null;
+  }
 
   // Fade out
-  masterGain.gain.linearRampToValueAtTime(0, c.currentTime + 1);
+  melodyGain.gain.linearRampToValueAtTime(0, c.currentTime + 0.5);
 
   setTimeout(() => {
-    oscillators.forEach((o) => { try { o.stop(); } catch {} });
-    lfos.forEach((l) => { try { l.stop(); } catch {} });
-    ambientNodes = null;
-  }, 1100);
+    melodyGain = null;
+    melodyIndex = 0;
+  }, 600);
 }
 
-/** Check if ambient is currently playing. */
+/** Check if melody is currently playing */
 export function isAmbientPlaying(): boolean {
-  return ambientNodes !== null;
+  return melodyGain !== null;
 }

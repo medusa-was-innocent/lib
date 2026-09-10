@@ -185,7 +185,7 @@ export function LibraryCard({
             <span className="font-mono text-[9px] text-moss">{count}</span>
           </div>
 
-          {/* Audio toggle - single line that becomes a wave */}
+          {/* Audio toggle - single line that becomes a moving wave */}
           <button
             type="button"
             onClick={toggleAudio}
@@ -198,16 +198,18 @@ export function LibraryCard({
               height="12"
               viewBox="0 0 160 12"
               preserveAspectRatio="none"
-              className={audioPlaying ? "animate-wave-line" : ""}
+              className="overflow-visible"
             >
               {audioPlaying ? (
-                <path
-                  d="M0,6 Q10,0 20,6 Q30,12 40,6 Q50,0 60,6 Q70,12 80,6 Q90,0 100,6 Q110,12 120,6 Q130,0 140,6 Q150,12 160,6"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="text-acc"
-                />
+                <g className={audioPlaying ? "animate-wave-line" : ""}>
+                  <path
+                    d="M0,6 Q10,0 20,6 Q30,12 40,6 Q50,0 60,6 Q70,12 80,6 Q90,0 100,6 Q110,12 120,6 Q130,0 140,6 Q150,12 160,6 Q170,0 180,6 Q190,12 200,6 Q210,0 220,6 Q230,12 240,6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    className="text-acc"
+                  />
+                </g>
               ) : (
                 <line
                   x1="0"
