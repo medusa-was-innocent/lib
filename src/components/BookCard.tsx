@@ -61,6 +61,20 @@ type MenuItem = { label: string; sub: string; href: string; icon: React.ReactNod
 
 function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setOpen: (o: boolean) => void }) {
   const ref = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    if (open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setMenuPos({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+      });
+    } else {
+      setMenuPos(null);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,18 +133,25 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
   );
 
   return (
-    <div className="relative" ref={ref}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="btn-click flex items-center gap-2 rounded-lg bg-moss px-3 py-1.5 text-xs font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:scale-95"
-      >
-        <IconDownload width={13} height={13} />
-        {book.ia.length > 0 ? "Download" : "Sources"}
-        <IconChevron width={11} height={11} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && (
-        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[260px] max-w-[calc(100vw-2rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)] sm:left-auto sm:right-0">
+    <>
+      <div className="relative">
+        <button
+          ref={buttonRef}
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="btn-click flex items-center gap-2 rounded-lg bg-moss px-3 py-1.5 text-xs font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:scale-95"
+        >
+          <IconDownload width={13} height={13} />
+          {book.ia.length > 0 ? "Download" : "Sources"}
+          <IconChevron width={11} height={11} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
+        </button>
+      </div>
+      {open && menuPos && (
+        <div
+          ref={ref}
+          className="animate-pop-in fixed z-[100] w-[260px] max-w-[calc(100vw-2rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)]"
+          style={{ top: menuPos.top, left: menuPos.left }}
+        >
           {items.map((it) => (
             <a
               key={it.label}
@@ -154,7 +175,7 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -164,6 +185,20 @@ function SimilarBookCard({ book }: { book: Book }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    if (menuOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setMenuPos({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+      });
+    } else {
+      setMenuPos(null);
+    }
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -250,8 +285,9 @@ function SimilarBookCard({ book }: { book: Book }) {
           <p className="truncate text-[9px] text-faint">{book.authors[0]}</p>
         )}
       {/* Compact download menu */}
-      <div className="relative mt-1" ref={ref}>
+      <div className="relative mt-1">
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
           className="btn-click flex w-full items-center justify-center gap-1 rounded-md border border-line bg-card px-2 py-1 text-[9px] font-semibold text-faint transition-colors hover:border-acc hover:text-acc"
@@ -260,28 +296,32 @@ function SimilarBookCard({ book }: { book: Book }) {
           Download
           <IconChevron width={9} height={9} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
         </button>
-        {menuOpen && (
-          <div className="animate-pop-in absolute bottom-full left-0 z-50 mb-1 w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]">
-            {items.map((it) => (
-              <a
-                key={it.label}
-                href={it.href}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => setMenuOpen(false)}
-                className="group/item flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-royal-soft/60"
-              >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-royal-soft text-royal">
-                  {it.icon}
-                </span>
-                <span className="text-[10px] font-semibold text-ink-900 group-hover/item:text-royal-deep">
-                  {it.label}
-                </span>
-              </a>
-            ))}
-          </div>
-        )}
       </div>
+      {menuOpen && menuPos && (
+        <div
+          ref={ref}
+          className="animate-pop-in fixed z-[100] w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]"
+          style={{ top: menuPos.top, left: menuPos.left }}
+        >
+          {items.map((it) => (
+            <a
+              key={it.label}
+              href={it.href}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="group/item flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-royal-soft/60"
+            >
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-royal-soft text-royal">
+                {it.icon}
+              </span>
+              <span className="text-[10px] font-semibold text-ink-900 group-hover/item:text-royal-deep">
+                {it.label}
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
     {showDetail && (
       <BookDetailModal book={book} onClose={() => setShowDetail(false)} />
