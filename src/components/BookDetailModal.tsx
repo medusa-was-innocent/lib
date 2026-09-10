@@ -142,7 +142,7 @@ export function BookDetailModal({
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-950/80 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-950/80 p-4">
       <div
         ref={modalRef}
         className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-line bg-card shadow-[0_20px_60px_rgba(12,31,49,0.4)]"
@@ -254,7 +254,7 @@ export function BookDetailModal({
               <button
                 type="button"
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="btn-click flex items-center gap-2 rounded-lg bg-moss px-4 py-2 text-sm font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:scale-95"
+                className="flex items-center gap-2 rounded-lg bg-moss px-4 py-2 text-sm font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:brightness-90"
               >
                 <IconDownload width={14} height={14} />
                 {book.ia.length > 0 ? "Download" : "Find Sources"}

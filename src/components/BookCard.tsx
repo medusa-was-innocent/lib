@@ -32,7 +32,7 @@ function Cover({ book }: { book: Book }) {
   const showImg = !!book.cover && !failed;
 
   return (
-    <div className="book-shake relative h-[120px] w-[82px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
+    <div className="book-shake relative aspect-[2/3] h-[140px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
       {showImg ? (
         <img
           src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
@@ -216,7 +216,7 @@ function SimilarBookCard({ book }: { book: Book }) {
           className="group/simcover relative cursor-pointer focus-ring"
           aria-label={`View details for ${book.title}`}
         >
-          <div className="relative h-[120px] w-full overflow-hidden rounded bg-ink-800">
+          <div className="relative aspect-[2/3] w-full overflow-hidden rounded bg-ink-800">
             {book.cover ? (
               <img
                 src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
@@ -339,7 +339,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <div className="skeleton h-[120px] w-full rounded" />
+                  <div className="skeleton aspect-[2/3] w-full rounded" />
                   <div className="skeleton h-2.5 w-3/4 rounded" />
                   <div className="skeleton h-2 w-1/2 rounded" />
                 </div>
@@ -387,13 +387,12 @@ export function BookCard({
 
   return (
     <>
-      <li
-        className={`book-lift card-contain row-in group relative grid grid-cols-[82px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[82px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
-          menuOpen ? "z-20" : ""
-        }`}
-        style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
-      >
-        <button
+    <li
+      className={`book-lift card-contain row-in group relative grid grid-cols-[93px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[93px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
+        menuOpen ? "z-20" : ""
+      }`}
+      style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
+    >        <button
           type="button"
           onClick={() => setShowDetail(true)}
           className="group/cover relative cursor-pointer focus-ring"
