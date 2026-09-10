@@ -81,7 +81,6 @@ export type BookDetail = {
   subjects: string[];
   pages?: number;
   firstSentence?: string;
-  links: { title: string; url: string }[];
 };
 
 /** Fetch detailed info (summary, subjects, etc.) for a book by its Open Library key. */
@@ -114,19 +113,11 @@ export async function fetchBookDetail(
       ? work.subjects.slice(0, 12)
       : [];
 
-    const links: { title: string; url: string }[] = Array.isArray(work.links)
-      ? work.links
-          .filter((l: any) => l.title && l.url)
-          .slice(0, 5)
-          .map((l: any) => ({ title: l.title, url: l.url }))
-      : [];
-
     return {
       description,
       subjects,
       pages: work.number_of_pages ?? undefined,
       firstSentence,
-      links,
     };
   } catch {
     return null;

@@ -9,7 +9,6 @@ import {
   IconFileDown,
   IconGlobe,
   IconSearch,
-  IconSpinner,
   IconX,
 } from "./icons";
 import {
@@ -337,31 +336,7 @@ export function BookDetailModal({
             </div>
           )}
 
-          {/* External links */}
-          {detail?.links && detail.links.length > 0 && (
-            <div className="mt-6">
-              <h3 className="mb-3 font-display text-lg font-semibold text-ink-900">
-                External Links
-              </h3>
-              <ul className="space-y-2">
-                {detail.links.map((link) => (
-                  <li key={link.url}>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="group flex items-center gap-2 text-sm text-royal transition-colors hover:text-royal-deep"
-                    >
-                      <IconExternal width={14} height={14} />
-                      <span className="underline decoration-royal/30 group-hover:decoration-royal-deep">
-                        {link.title}
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+
         </div>
       </div>
     </div>
