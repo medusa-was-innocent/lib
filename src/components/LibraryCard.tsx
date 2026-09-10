@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LogoMark, IconX } from "./icons";
+import { LogoMark, IconX, IconSparkle } from "./icons";
 import { playStampSound } from "../lib/sound";
 import type { Book } from "../lib/api";
-import { annasUrl, googleBooksUrl, zLibraryUrl } from "../lib/api";
+import { annasUrl, googleBooksUrl, zLibraryUrl, searchBooks } from "../lib/api";
 
 type StampType = "SAVED" | "ARCHIVED" | "CHECKED OUT" | null;
 
@@ -49,6 +49,8 @@ export function LibraryCard({
   const [docked, setDocked] = useState(false);
   const [dockSide, setDockSide] = useState<"left" | "right">("right");
   const [dockY, setDockY] = useState(0);
+  const [surpriseBook, setSurpriseBook] = useState<Book | null>(null);
+  const [surpriseLoading, setSurpriseLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
     dragging: boolean;
@@ -119,6 +121,24 @@ export function LibraryCard({
     }
   };
 
+  const surpriseMe = async () => {
+    setSurpriseLoading(true);
+    try {
+      // Get a random book by searching for common terms
+      const randomTerms = ["classic", "adventure", "mystery", "philosophy", "poetry", "science", "history"];
+      const term = randomTerms[Math.floor(Math.random() * randomTerms.length)];
+      const result = await searchBooks(term, 1, { lang: "", sort: "rating", ebookOnly: false });
+      if (result.items.length > 0) {
+        const randomIndex = Math.floor(Math.random() * Math.min(10, result.items.length));
+        setSurpriseBook(result.items[randomIndex]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch surprise book:", error);
+    } finally {
+      setSurpriseLoading(false);
+    }
+  };
+
   return (
     <div
       ref={cardRef}
@@ -129,13 +149,15 @@ export function LibraryCard({
     >
       {/* Full card state */}
       {!docked && (
-        <div className="relative w-[200px] rounded-lg border border-ink-700 bg-ink-900 shadow-[0_10px_30px_rgba(12,31,49,0.4)]">
-          {/* Draggable header */}
+        <div
+          className="relative w-[200px] cursor-grab rounded-lg border border-ink-700 bg-ink-900 shadow-[0_10px_30px_rgba(12,31,49,0.4)] active:cursor-grabbing"
+          onPointerDown={onPointerDown}
+        >
+          {/* Header (click to expand) */}
           <div
-            className="flex cursor-grab items-center gap-2 border-b border-ink-700 px-3 py-2 active:cursor-grabbing"
-            onPointerDown={onPointerDown}
+            className="flex items-center gap-2 border-b border-ink-700 px-3 py-2"
             onClick={handleHeaderClick}
-            title="Drag to move · Click to expand"
+            title="Click to expand"
           >
             <LogoMark size={22} />
             <div className="min-w-0 flex-1">
@@ -152,6 +174,77 @@ export function LibraryCard({
                 <span className="font-mono text-[9px] uppercase tracking-wide text-[#7f95ab]">Saved</span>
                 <span className="font-mono text-sm font-bold text-moss">{count}</span>
               </div>
+              {/* Surprise Me button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  surpriseMe();
+                }}
+                disabled={surpriseLoading}
+                className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-acc/30 bg-acc/10 px-2 py-1.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-acc transition-all hover:border-acc hover:bg-acc/20 disabled:opacity-50"
+              >
+                <IconSparkle width={10} height={10} />
+                {surpriseLoading ? "Finding..." : "Surprise Me"}
+              </button>
+            </div>
+          )}
+
+          {/* Surprise Book Display */}
+          {surpriseBook && !expanded && (
+            <div className="border-t border-ink-700/50 px-3 py-2">
+              <div className="flex gap-2">
+                {surpriseBook.cover ? (
+                  <img
+                    src={`https://covers.openlibrary.org/b/id/${surpriseBook.cover}-S.jpg`}
+                    alt={surpriseBook.title}
+                    className="h-12 w-9 shrink-0 rounded object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="flex h-12 w-9 shrink-0 items-center justify-center rounded bg-gradient-to-br from-ink-700 to-ink-950">
+                    <span className="text-xs font-bold text-acc">{surpriseBook.title.charAt(0)}</span>
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-paper">
+                    {surpriseBook.title}
+                  </p>
+                  {surpriseBook.authors[0] && (
+                    <p className="truncate text-[9px] text-[#7f95ab]">{surpriseBook.authors[0]}</p>
+                  )}
+                  <div className="mt-1 flex gap-1">
+                    <a
+                      href={zLibraryUrl({ title: surpriseBook.title, authors: surpriseBook.authors } as Book)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded bg-ink-700 px-1.5 py-0.5 font-mono text-[7px] font-semibold text-paper/80 transition-colors hover:bg-acc hover:text-ink-950"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Z-Lib
+                    </a>
+                    <a
+                      href={annasUrl({ title: surpriseBook.title, authors: surpriseBook.authors } as Book)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded bg-ink-700 px-1.5 py-0.5 font-mono text-[7px] font-semibold text-paper/80 transition-colors hover:bg-acc hover:text-ink-950"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Anna's
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSurpriseBook(null);
+                }}
+                className="mt-1 w-full rounded border border-ink-700 px-2 py-1 font-mono text-[8px] text-[#7f95ab] transition-colors hover:border-rust hover:text-rust"
+              >
+                Dismiss
+              </button>
             </div>
           )}
 

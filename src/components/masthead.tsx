@@ -108,20 +108,20 @@ function CountUp({ to, label, sub }: { to: number; label: string; sub: string })
 /* ---------- Bookshelf ---------- */
 
 const SPINES: { t: string; a: string; h: number; c: string; w: number }[] = [
-  { t: "THE ODYSSEY", a: "Homer", h: 178, c: "#1f6fb2", w: 30 },
-  { t: "MOBY-DICK", a: "Melville", h: 158, c: "#2e6e5e", w: 36 },
-  { t: "DON QUIXOTE", a: "Cervantes", h: 194, c: "#b3512f", w: 28 },
-  { t: "HAMLET", a: "Shakespeare", h: 142, c: "#3d4f7c", w: 34 },
-  { t: "WALDEN", a: "Thoreau", h: 154, c: "#c99a2e", w: 26 },
-  { t: "MIDDLEMARCH", a: "Eliot", h: 186, c: "#7a3b4f", w: 32 },
-  { t: "CANDIDE", a: "Voltaire", h: 136, c: "#38657f", w: 30 },
-  { t: "THE REPUBLIC", a: "Plato", h: 168, c: "#5b7d54", w: 34 },
-  { t: "INVISIBLE CITIES", a: "Calvino", h: 148, c: "#a8663b", w: 26 },
-  { t: "BELOVED", a: "Morrison", h: 162, c: "#8c4a5e", w: 30 },
-  { t: "ULYSSES", a: "Joyce", h: 200, c: "#2c5a80", w: 36 },
-  { t: "FRANKENSTEIN", a: "Shelley", h: 152, c: "#4a5a8a", w: 28 },
-  { t: "THE STRANGER", a: "Camus", h: 140, c: "#99652f", w: 32 },
-  { t: "THINGS FALL APART", a: "Achebe", h: 158, c: "#356b6b", w: 26 },
+  { t: "THE ODYSSEY", a: "Homer", h: 190, c: "#1f6fb2", w: 38 },
+  { t: "MOBY-DICK", a: "Melville", h: 170, c: "#2e6e5e", w: 44 },
+  { t: "DON QUIXOTE", a: "Cervantes", h: 206, c: "#b3512f", w: 36 },
+  { t: "HAMLET", a: "Shakespeare", h: 154, c: "#3d4f7c", w: 42 },
+  { t: "WALDEN", a: "Thoreau", h: 166, c: "#c99a2e", w: 34 },
+  { t: "MIDDLEMARCH", a: "Eliot", h: 198, c: "#7a3b4f", w: 40 },
+  { t: "CANDIDE", a: "Voltaire", h: 148, c: "#38657f", w: 38 },
+  { t: "THE REPUBLIC", a: "Plato", h: 180, c: "#5b7d54", w: 42 },
+  { t: "INVISIBLE CITIES", a: "Calvino", h: 160, c: "#a8663b", w: 34 },
+  { t: "BELOVED", a: "Morrison", h: 174, c: "#8c4a5e", w: 38 },
+  { t: "ULYSSES", a: "Joyce", h: 212, c: "#2c5a80", w: 44 },
+  { t: "FRANKENSTEIN", a: "Shelley", h: 164, c: "#4a5a8a", w: 36 },
+  { t: "THE STRANGER", a: "Camus", h: 152, c: "#99652f", w: 40 },
+  { t: "THINGS FALL APART", a: "Achebe", h: 170, c: "#356b6b", w: 34 },
 ];
 
 function Shelf({ onSearch }: { onSearch: (q: string) => void }) {
@@ -143,7 +143,7 @@ function Shelf({ onSearch }: { onSearch: (q: string) => void }) {
               animationDelay: `${300 + i * 55}ms`,
             }}
           >
-            <span className="spine-label absolute left-1/2 top-2 -translate-x-1/2 font-mono text-[9px] font-semibold tracking-wider text-paper/90 transition-colors group-hover/spine:text-acc">
+            <span className="spine-label absolute left-1/2 top-2 -translate-x-1/2 font-mono text-[11px] font-bold tracking-wider text-paper/90 transition-colors group-hover/spine:text-acc">
               {s.t}
             </span>
             <span className="absolute inset-x-[4px] bottom-2 h-px bg-paper/25" />

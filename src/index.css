@@ -194,6 +194,16 @@ body {
   outline-offset: 2px;
 }
 
+/* Wave animation for audio player */
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+.animate-wave {
+  animation: wave 0.8s ease-in-out infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -208,6 +218,10 @@ body {
   .book-lift:hover .book-shake,
   .book-lift:focus-within .book-shake {
     animation: none;
+  }
+  .animate-wave {
+    animation: none;
+    height: 8px;
   }
 }
 
