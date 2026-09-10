@@ -149,7 +149,7 @@ function SkeletonRows() {
     <ul className="space-y-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <li key={i} className="flex gap-4 rounded-lg border border-line bg-card p-4">
-          <div className="skeleton h-[110px] w-[76px] shrink-0 rounded" />
+          <div className="skeleton h-[120px] w-[82px] shrink-0 rounded" />
           <div className="flex-1 space-y-2.5 py-1">
             <div className="skeleton h-3.5 w-2/3 rounded" />
             <div className="skeleton h-2.5 w-1/3 rounded" />

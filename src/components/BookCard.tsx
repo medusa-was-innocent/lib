@@ -31,10 +31,10 @@ function Cover({ book }: { book: Book }) {
   const showImg = !!book.cover && !failed;
 
   return (
-    <div className="book-shake relative h-[110px] w-[76px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
+    <div className="book-shake relative h-[120px] w-[82px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
       {showImg ? (
         <img
-          src={`https://covers.openlibrary.org/b/id/${book.cover}-S.jpg`}
+          src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
           alt={`Cover of ${book.title}`}
           loading="lazy"
           decoding="async"
@@ -361,7 +361,7 @@ export function BookCard({
 
   return (
     <li
-      className={`book-lift card-contain row-in group relative grid grid-cols-[76px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[76px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
+      className={`book-lift card-contain row-in group relative grid grid-cols-[82px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[82px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
         menuOpen ? "z-20" : ""
       }`}
       style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}

@@ -54,7 +54,9 @@ export function LibraryCard({
   const [stamp, setStamp] = useState<StampType>(null);
   const [stampKey, setStampKey] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [minimized, setMinimized] = useState(false);
+  const [docked, setDocked] = useState(false);
+  const [dockSide, setDockSide] = useState<"left" | "right">("right");
+  const [dockY, setDockY] = useState(0);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -134,21 +136,8 @@ export function LibraryCard({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
-      {/* Minimized state */}
-      {minimized ? (
-        <button
-          onClick={() => setMinimized(false)}
-          className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-ink-700 bg-ink-900 shadow-[0_10px_30px_rgba(12,31,49,0.4)] transition-all hover:scale-110 hover:border-acc"
-          title="Expand library card"
-        >
-          <LogoMark size={32} />
-          {count > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-moss font-mono text-[10px] font-bold text-white">
-              {count}
-            </span>
-          )}
-        </button>
-      ) : (
+      {/* Full card state - only show when not docked */}
+      {!docked && (
       <div className="relative w-[200px] rounded-lg border border-ink-700 bg-ink-900 shadow-[0_10px_30px_rgba(12,31,49,0.4)]">
         {/* Draggable header */}
         <div
@@ -282,13 +271,52 @@ export function LibraryCard({
         {/* Minimize button */}
         <button
           type="button"
-          onClick={(e) => { e.stopPropagation(); setMinimized(true); setExpanded(false); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            // Calculate nearest edge
+            const cardRect = cardRef.current?.getBoundingClientRect();
+            if (cardRect) {
+              const centerX = cardRect.left + cardRect.width / 2;
+              const side = centerX < window.innerWidth / 2 ? "left" : "right";
+              setDockSide(side);
+              setDockY(cardRect.top + cardRect.height / 2);
+            }
+            setDocked(true);
+            setExpanded(false);
+          }}
           className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-ink-700 bg-ink-900 text-[#7f95ab] transition-colors hover:border-acc hover:text-acc"
-          title="Minimize"
+          title="Dock to edge"
         >
           <IconX width={10} height={10} />
         </button>
       </div>
+      )}
+
+      {/* Semi-circle dock tab */}
+      {docked && (
+        <button
+          onClick={() => {
+            setDocked(false);
+            // Restore position near where it was docked
+            const x = dockSide === "right" ? window.innerWidth - 220 : 20;
+            const y = Math.max(20, Math.min(window.innerHeight - 200, dockY - 50));
+            setPos({ x, y });
+          }}
+          className={`fixed z-40 flex h-20 w-10 items-center justify-center border-2 border-ink-700 bg-ink-900 shadow-[0_0_20px_rgba(12,31,49,0.4)] transition-all hover:w-12 hover:border-acc ${
+            dockSide === "right"
+              ? "right-0 rounded-l-full border-r-0"
+              : "left-0 rounded-r-full border-l-0"
+          }`}
+          style={{ top: dockY - 40 }}
+          title="Expand library card"
+        >
+          <div className="flex flex-col items-center gap-1">
+            <LogoMark size={24} />
+            {count > 0 && (
+              <span className="font-mono text-[9px] font-bold text-moss">{count}</span>
+            )}
+          </div>
+        </button>
       )}
     </div>
   );
