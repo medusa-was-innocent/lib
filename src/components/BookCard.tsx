@@ -237,20 +237,22 @@ function SimilarBookCard({ book }: { book: Book }) {
             </span>
           </span>
         </button>
-        <button
-          type="button"
-          onClick={() => setShowDetail(true)}
-          className="text-left cursor-pointer focus-ring"
-        >
-          <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-ink-900 hover:text-royal-deep">
-            {book.title}
-          </p>
-        </button>
-        {book.authors[0] && (
-          <p className="truncate text-[9px] text-faint">{book.authors[0]}</p>
-        )}
+        <div className="flex flex-col flex-1">
+          <button
+            type="button"
+            onClick={() => setShowDetail(true)}
+            className="text-left cursor-pointer focus-ring"
+          >
+            <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-ink-900 hover:text-royal-deep">
+              {book.title}
+            </p>
+          </button>
+          {book.authors[0] && (
+            <p className="truncate text-[9px] text-faint">{book.authors[0]}</p>
+          )}
+        </div>
       {/* Compact download menu */}
-      <div className="relative mt-1" ref={ref}>
+      <div className="relative mt-auto" ref={ref}>
         <button
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -335,7 +337,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
 
       {open && (
         <div className="similar-expand mt-3 overflow-visible">
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+          <div className="grid grid-cols-3 gap-3 items-stretch sm:grid-cols-4 md:grid-cols-6">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
