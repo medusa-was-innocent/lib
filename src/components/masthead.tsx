@@ -105,6 +105,60 @@ function CountUp({ to, label, sub }: { to: number; label: string; sub: string })
   );
 }
 
+/* ---------- Bookshelf ---------- */
+
+const SPINES: { t: string; a: string; h: number; c: string; w: number }[] = [
+  { t: "THE ODYSSEY", a: "Homer", h: 178, c: "#1f6fb2", w: 30 },
+  { t: "MOBY-DICK", a: "Melville", h: 158, c: "#2e6e5e", w: 36 },
+  { t: "DON QUIXOTE", a: "Cervantes", h: 194, c: "#b3512f", w: 28 },
+  { t: "HAMLET", a: "Shakespeare", h: 142, c: "#3d4f7c", w: 34 },
+  { t: "WALDEN", a: "Thoreau", h: 154, c: "#c99a2e", w: 26 },
+  { t: "MIDDLEMARCH", a: "Eliot", h: 186, c: "#7a3b4f", w: 32 },
+  { t: "CANDIDE", a: "Voltaire", h: 136, c: "#38657f", w: 30 },
+  { t: "THE REPUBLIC", a: "Plato", h: 168, c: "#5b7d54", w: 34 },
+  { t: "INVISIBLE CITIES", a: "Calvino", h: 148, c: "#a8663b", w: 26 },
+  { t: "BELOVED", a: "Morrison", h: 162, c: "#8c4a5e", w: 30 },
+  { t: "ULYSSES", a: "Joyce", h: 200, c: "#2c5a80", w: 36 },
+  { t: "FRANKENSTEIN", a: "Shelley", h: 152, c: "#4a5a8a", w: 28 },
+  { t: "THE STRANGER", a: "Camus", h: 140, c: "#99652f", w: 32 },
+  { t: "THINGS FALL APART", a: "Achebe", h: 158, c: "#356b6b", w: 26 },
+];
+
+function Shelf({ onSearch }: { onSearch: (q: string) => void }) {
+  return (
+    <div className="relative mt-6">
+      <div className="flex items-end justify-center gap-[5px] pb-[13px]">
+        {SPINES.map((s, i) => (
+          <button
+            key={s.t}
+            type="button"
+            title={`Search "${s.t.toLowerCase()}"`}
+            onClick={() => onSearch(`${s.a} ${s.t.toLowerCase()}`)}
+            className="row-in group/spine relative overflow-hidden rounded-t-[3px] text-left transition-transform duration-300 ease-out hover:-translate-y-3"
+            style={{
+              width: s.w,
+              height: s.h,
+              background: `linear-gradient(100deg, ${s.c} 0%, ${s.c} 55%, rgba(0,0,0,0.28) 130%)`,
+              boxShadow: "inset -5px 0 10px rgba(0,0,0,0.22), inset 4px 0 6px rgba(255,255,255,0.14), 0 10px 18px rgba(0,0,0,0.35)",
+              animationDelay: `${300 + i * 55}ms`,
+            }}
+          >
+            <span className="spine-label absolute left-1/2 top-2 -translate-x-1/2 font-mono text-[9px] font-semibold tracking-wider text-paper/90 transition-colors group-hover/spine:text-acc">
+              {s.t}
+            </span>
+            <span className="absolute inset-x-[4px] bottom-2 h-px bg-paper/25" />
+            <span className="absolute inset-x-[4px] bottom-4 h-px bg-paper/15" />
+          </button>
+        ))}
+      </div>
+      <div className="h-[10px] w-full rounded-sm bg-ink-700 shadow-[0_14px_34px_rgba(0,0,0,0.5)]" />
+      <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-[#7f95ab]">
+        pull a spine — it searches itself
+      </p>
+    </div>
+  );
+}
+
 /* ---------- Masthead ---------- */
 
 const SUGGESTIONS = ["sherlock holmes", "isaac asimov", "jane austen", "meditations", "dostoevsky"];
@@ -284,6 +338,7 @@ export function Masthead({
             <CountUp to={150} label="article metadata records" sub="crossref" />
             <CountUp to={44} label="free archived texts" sub="internet archive" />
           </div>
+          <Shelf onSearch={onSearch} />
         </div>
       </div>
     </header>

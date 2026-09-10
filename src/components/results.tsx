@@ -384,7 +384,7 @@ export function Results({
         )}
 
         {/* List */}
-        <div className="mt-5 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_10px_40px_rgba(12,31,49,0.07)]">
+        <div className="mt-5 rounded-2xl border border-line bg-card shadow-[0_10px_40px_rgba(12,31,49,0.07)]">
           {loading ? (
             <SkeletonRows />
           ) : error ? (

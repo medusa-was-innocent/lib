@@ -206,7 +206,7 @@ function SimilarBookCard({ book }: { book: Book }) {
   ];
 
   return (
-    <div className="relative flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)]">
+    <div className={`relative flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)] ${menuOpen ? "z-30" : ""}`}>
       <div className="relative h-[90px] w-full overflow-hidden rounded bg-ink-800">
         {book.cover ? (
           <img
@@ -240,7 +240,7 @@ function SimilarBookCard({ book }: { book: Book }) {
           <IconChevron width={9} height={9} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
         </button>
         {menuOpen && (
-          <div className="animate-pop-in absolute left-0 top-full z-20 mt-1 w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]">
+          <div className="animate-pop-in absolute bottom-full left-0 z-50 mb-1 w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]">
             {items.map((it) => (
               <a
                 key={it.label}
@@ -309,22 +309,24 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
       </button>
 
       {open && (
-        <div className="similar-expand mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6" style={{ contentVisibility: "auto" }}>
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex flex-col gap-1.5">
-                <div className="skeleton h-[90px] w-full rounded" />
-                <div className="skeleton h-2.5 w-3/4 rounded" />
-                <div className="skeleton h-2 w-1/2 rounded" />
-              </div>
-            ))
-          ) : books.length === 0 ? (
-            <p className="col-span-full py-3 text-center font-mono text-[10px] text-faint">
-              No similar books found for this seed.
-            </p>
-          ) : (
-            books.map((b) => <SimilarBookCard key={b.id} book={b} />)
-          )}
+        <div className="similar-expand mt-3 overflow-visible">
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+            {loading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex flex-col gap-1.5">
+                  <div className="skeleton h-[90px] w-full rounded" />
+                  <div className="skeleton h-2.5 w-3/4 rounded" />
+                  <div className="skeleton h-2 w-1/2 rounded" />
+                </div>
+              ))
+            ) : books.length === 0 ? (
+              <p className="col-span-full py-3 text-center font-mono text-[10px] text-faint">
+                No similar books found for this seed.
+              </p>
+            ) : (
+              books.map((b) => <SimilarBookCard key={b.id} book={b} />)
+            )}
+          </div>
         </div>
       )}
     </div>

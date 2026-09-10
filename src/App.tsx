@@ -43,7 +43,7 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
 
   const [perfMode, setPerfMode] = usePerfMode();
-  const { saved, isSaved, toggleSave, count: savedCount } = useSavedBooks();
+  const { saved, isSaved, toggleSave, removeSaved, count: savedCount } = useSavedBooks();
   const [lastStamp, setLastStamp] = useState<"SAVED" | "ARCHIVED" | "CHECKED OUT" | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -289,7 +289,7 @@ export default function App() {
 
       <Info onToast={showToast} />
 
-      <LibraryCard count={savedCount} lastAction={lastStamp} />
+      <LibraryCard count={savedCount} lastAction={lastStamp} saved={saved} onRemove={removeSaved} />
 
       {toast && (
         <div

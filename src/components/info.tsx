@@ -188,6 +188,14 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
             >
               github.com/Devanshu-17/zLibrary
             </a>
+            <a
+              href="https://github.com/medusa-was-innocent"
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-[11px] text-[#9db2c7] underline decoration-ink-600 underline-offset-4 transition-colors hover:text-acc"
+            >
+              built by @medusa-was-innocent
+            </a>
             <p className="max-w-md text-right font-mono text-[9px] leading-relaxed text-[#5f7590]">
               catalog data © Open Library · CrossRef · Internet Archive. External links open in new tabs.
             </p>
