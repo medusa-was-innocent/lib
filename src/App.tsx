@@ -8,7 +8,7 @@ import { IconCheck } from "./components/icons";
 
 const DEFAULT_FILTERS: BookFilters = { lang: "", sort: "relevance", ebookOnly: false };
 const PRELOAD = "sherlock holmes";
-const RECENT_KEY = "zlibrary-recent";
+const RECENT_KEY = "bibliotheke-recent";
 
 function loadRecent(): string[] {
   try {
@@ -197,7 +197,7 @@ export default function App() {
   /* ---------- render ---------- */
 
   return (
-    <div id="top" className="min-h-screen bg-paper font-body text-ink-900">
+    <div id="top" className="min-h-screen bg-void font-body text-chrome">
       <Masthead
         mode={mode}
         onMode={switchMode}
@@ -246,9 +246,9 @@ export default function App() {
         <div
           key={toast.id}
           role="status"
-          className="animate-toast-in fixed bottom-6 right-6 z-[80] flex items-center gap-3 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm font-semibold text-paper shadow-[0_18px_50px_rgba(0,0,0,0.45)]"
+          className="animate-toast-in fixed bottom-6 right-6 z-[80] flex items-center gap-3 rounded-xl glass-strong px-4 py-3 text-sm font-semibold text-chrome-bright shadow-[0_18px_50px_rgba(0,0,0,0.5)]"
         >
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-moss/20 text-moss">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neon-lime/20 text-neon-lime">
             <IconCheck width={13} height={13} />
           </span>
           {toast.msg}

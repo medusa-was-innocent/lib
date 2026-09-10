@@ -75,6 +75,48 @@ export async function searchBooks(
   return { items, total: data.numFound ?? 0, page: data.page ?? page };
 }
 
+/** Fetch similar books by mining the subject + author of a seed book. */
+export async function searchSimilar(
+  book: Book,
+  signal?: AbortSignal
+): Promise<Book[]> {
+  // Build a query from subjects and the primary author — both are strong signals.
+  const parts: string[] = [];
+  if (book.subjects.length > 0) parts.push(`subject:${book.subjects[0]}`);
+  if (book.authors[0]) parts.push(`author:${book.authors[0]}`);
+  const q = parts.length > 0 ? parts.join(" OR ") : book.title;
+
+  const params = new URLSearchParams({
+    q,
+    limit: "8",
+    fields: OL_FIELDS,
+  });
+
+  const res = await fetch(`https://openlibrary.org/search.json?${params.toString()}`, { signal });
+  if (!res.ok) return [];
+  const data = await res.json();
+
+  const items: Book[] = (data.docs ?? [])
+    .filter((d: any) => d.key !== book.id) // exclude the seed
+    .slice(0, 6)
+    .map((d: any) => ({
+      id: d.key as string,
+      title: (d.title ?? "Untitled") as string,
+      authors: (d.author_name ?? []) as string[],
+      year: d.first_publish_year ?? undefined,
+      publisher: d.publisher?.[0],
+      editions: d.edition_count ?? 0,
+      cover: d.cover_i ?? undefined,
+      ia: (d.ia ?? []).slice(0, 2),
+      langs: (d.language ?? []).slice(0, 3),
+      pages: d.number_of_pages_median ?? undefined,
+      ebook: d.ebook_access ?? "no_ebook",
+      subjects: (d.subject ?? []).slice(0, 4),
+    }));
+
+  return items;
+}
+
 export async function searchArticles(
   q: string,
   page: number,
@@ -87,7 +129,7 @@ export async function searchArticles(
     offset: String((page - 1) * rows),
     select: "DOI,title,author,container-title,published-print,published-online,URL,type,publisher",
     sort: "relevance",
-    mailto: "zlibrary-web@example.org",
+    mailto: "bibliotheke-web@example.org",
   });
   const res = await fetch(`https://api.crossref.org/works?${params.toString()}`, { signal });
   if (!res.ok) throw new Error(`CrossRef responded ${res.status}`);
@@ -116,7 +158,7 @@ export async function searchArticles(
 /** Ask Unpaywall for the best open-access copy of a DOI. Returns a URL or null. */
 export async function findOaPdf(doi: string): Promise<string | null> {
   const res = await fetch(
-    `https://api.unpaywall.org/v2/${encodeURIComponent(doi)}?email=zlibrary-web@example.org`
+    `https://api.unpaywall.org/v2/${encodeURIComponent(doi)}?email=bibliotheke-web@example.org`
   );
   if (!res.ok) return null;
   const data = await res.json();
@@ -128,15 +170,27 @@ export async function findOaPdf(doi: string): Promise<string | null> {
 
 export const archiveUrl = (iaId: string) => `https://archive.org/details/${iaId}`;
 export const olUrl = (key: string) => `https://openlibrary.org${key}`;
-export const googleBooksUrl = (b: Book) =>
-  `https://www.google.com/search?q=${encodeURIComponent(`"${b.title}" ${b.authors[0] ?? ""} book`)}`;
-export const annasUrl = (b: Book) =>
-  `https://annas-archive.org/search?q=${encodeURIComponent(`${b.title} ${b.authors[0] ?? ""}`)}`;
-export const zPortalUrl = "https://singlelogin.re";
 export const doiUrl = (doi: string) => `https://doi.org/${doi}`;
 
-export const zSearchUrl = (title: string, author?: string) =>
-  `https://annas-archive.org/search?q=${encodeURIComponent([title, author ?? ""].join(" ").trim())}`;
+/** Build a `+`-joined query from a book's title and first author. */
+export const bookQuery = (b: Book): string => {
+  const author = b.authors[0] ?? "";
+  return `${b.title} ${author}`.trim();
+};
+
+export const googleSearchUrl = (b: Book) =>
+  `https://www.google.com/search?udm=36&q=${encodeURIComponent(bookQuery(b))}`;
+
+export const googleBooksUrl = (b: Book) =>
+  `https://books.google.com/books?q=${encodeURIComponent(bookQuery(b))}`;
+
+export const annasUrl = (b: Book) =>
+  `https://annas-archive.gl/search?index=&page=1&sort=&display=&q=${encodeURIComponent(
+    bookQuery(b)
+  )}&check=1`;
+
+export const zLibraryUrl = (b: Book) =>
+  `https://z-library.sk/s/${encodeURIComponent(bookQuery(b))}`;
 
 /* ---------- citations ---------- */
 
