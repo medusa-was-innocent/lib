@@ -54,6 +54,7 @@ export function LibraryCard({
   const [stamp, setStamp] = useState<StampType>(null);
   const [stampKey, setStampKey] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -133,6 +134,21 @@ export function LibraryCard({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
+      {/* Minimized state */}
+      {minimized ? (
+        <button
+          onClick={() => setMinimized(false)}
+          className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-ink-700 bg-ink-900 shadow-[0_10px_30px_rgba(12,31,49,0.4)] transition-all hover:scale-110 hover:border-acc"
+          title="Expand library card"
+        >
+          <LogoMark size={32} />
+          {count > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-moss font-mono text-[10px] font-bold text-white">
+              {count}
+            </span>
+          )}
+        </button>
+      ) : (
       <div className="relative w-[200px] rounded-lg border border-ink-700 bg-ink-900 shadow-[0_10px_30px_rgba(12,31,49,0.4)]">
         {/* Draggable header */}
         <div
@@ -156,7 +172,6 @@ export function LibraryCard({
               <span className="font-mono text-[9px] uppercase tracking-wide text-[#7f95ab]">Saved</span>
               <span className="font-mono text-sm font-bold text-moss">{count}</span>
             </div>
-            <p className="mt-1 font-mono text-[8px] text-[#5f7590]">Click header to view</p>
           </div>
         )}
 
@@ -263,7 +278,18 @@ export function LibraryCard({
             </div>
           </div>
         )}
+
+        {/* Minimize button */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setMinimized(true); setExpanded(false); }}
+          className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-ink-700 bg-ink-900 text-[#7f95ab] transition-colors hover:border-acc hover:text-acc"
+          title="Minimize"
+        >
+          <IconX width={10} height={10} />
+        </button>
       </div>
+      )}
     </div>
   );
 }

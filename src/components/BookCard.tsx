@@ -207,10 +207,10 @@ function SimilarBookCard({ book }: { book: Book }) {
 
   return (
     <div className={`relative flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)] ${menuOpen ? "z-30" : ""}`}>
-      <div className="relative h-[90px] w-full overflow-hidden rounded bg-ink-800">
+      <div className="relative h-[120px] w-full overflow-hidden rounded bg-ink-800">
         {book.cover ? (
           <img
-            src={`https://covers.openlibrary.org/b/id/${book.cover}-S.jpg`}
+            src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
             alt={book.title}
             loading="lazy"
             decoding="async"
@@ -310,11 +310,11 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
 
       {open && (
         <div className="similar-expand mt-3 overflow-visible">
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <div className="skeleton h-[90px] w-full rounded" />
+                  <div className="skeleton h-[120px] w-full rounded" />
                   <div className="skeleton h-2.5 w-3/4 rounded" />
                   <div className="skeleton h-2 w-1/2 rounded" />
                 </div>
