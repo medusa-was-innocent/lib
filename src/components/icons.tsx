@@ -145,14 +145,6 @@ export const IconQuote = (p: P) => (
   </svg>
 );
 
-export const IconLibrary = (p: P) => (
-  <svg {...base(p)}>
-    <path d="M4 20V8M8.5 20V8M13 20l3-12.5" />
-    <path d="M2.5 20h19" />
-    <path d="M14.5 4.5 19 3l3 12-4.5 1.5" />
-  </svg>
-);
-
 export const IconStar = (p: P) => (
   <svg {...base(p)}>
     <path d="m12 3 2.7 5.8 6.3.7-4.7 4.3 1.3 6.2L12 16.9 6.4 20l1.3-6.2L3 9.5l6.3-.7Z" />
@@ -189,18 +181,11 @@ export const IconColumn = (p: P) => (
   </svg>
 );
 
-/** The Bibliothēkē mark — holographic B on a dark tile */
+/** The Bibliothēkē mark — stylized B with warm colors */
 export const LogoMark = ({ size = 34 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
-    <defs>
-      <linearGradient id="holo" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#00f0ff" />
-        <stop offset="50%" stopColor="#ff00e5" />
-        <stop offset="100%" stopColor="#b8ff00" />
-      </linearGradient>
-    </defs>
-    <rect width="32" height="32" rx="7" fill="#0a0a1f" stroke="url(#holo)" strokeWidth="1" />
-    <text x="16" y="22" textAnchor="middle" fontFamily="Georgia, serif" fontSize="18" fontWeight="700" fill="url(#holo)">
+    <rect width="32" height="32" rx="7" fill="#f0a32f" />
+    <text x="16" y="22" textAnchor="middle" fontFamily="Georgia, serif" fontSize="18" fontWeight="700" fill="#0c1f31">
       β
     </text>
   </svg>

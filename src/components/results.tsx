@@ -43,7 +43,7 @@ function Cover({ book }: { book: Book }) {
   const [failed, setFailed] = useState(false);
   const showImg = !!book.cover && !failed;
   return (
-    <div className="relative h-[104px] w-[72px] shrink-0 overflow-hidden rounded-[4px] bg-void-4 ring-1 ring-white/10">
+    <div className="relative h-[104px] w-[72px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
       {showImg ? (
         <img
           src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
@@ -51,12 +51,12 @@ function Cover({ book }: { book: Book }) {
           loading="lazy"
           onLoad={() => setLoaded(true)}
           onError={() => setFailed(true)}
-          className={`h-full w-full object-cover ${loaded ? "opacity-100" : "opacity-0"}`}
+          className={`h-full w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
         />
       ) : (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-void-3 to-void-5">
-          <span className="font-display text-3xl font-semibold neon-cyan">{book.title.charAt(0)}</span>
-          <span className="px-1.5 text-center font-mono text-[7px] uppercase leading-tight tracking-wider text-chrome-dim">
+        <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-ink-700 to-ink-950">
+          <span className="font-display text-3xl font-semibold text-acc">{book.title.charAt(0)}</span>
+          <span className="px-1.5 text-center font-mono text-[7px] uppercase leading-tight tracking-wider text-paper/60">
             {book.title.slice(0, 30)}
           </span>
         </div>
@@ -143,14 +143,14 @@ function DownloadMenu({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="btn-click flex items-center gap-2 rounded-lg bg-neon-lime px-4 py-2 text-sm font-bold text-void transition-colors hover:bg-[#c8ff33]"
+        className="btn-click flex items-center gap-2 rounded-lg bg-moss px-4 py-2 text-sm font-bold text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] transition-all hover:bg-[#278a55] active:scale-95"
       >
         <IconDownload width={15} height={15} />
         {book.ia.length > 0 ? "Download" : "Sources"}
         <IconChevron width={13} height={13} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[280px] max-w-[calc(100vw-2.5rem)] rounded-xl glass-strong p-1.5 shadow-[0_18px_50px_rgba(0,0,0,0.5)] sm:left-auto sm:right-0">
+        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[272px] max-w-[calc(100vw-2.5rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)] sm:left-auto sm:right-0">
           {items.map((it) => (
             <a
               key={it.label}
@@ -158,18 +158,18 @@ function DownloadMenu({
               target="_blank"
               rel="noreferrer"
               onClick={() => setOpen(false)}
-              className="group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5"
+              className="group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-royal-soft/60"
             >
-              <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md glass text-chrome-dim transition-colors group-hover/item:text-neon-cyan">
+              <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-royal-soft text-royal">
                 {it.icon}
               </span>
               <span className="min-w-0">
-                <span className="block text-[13px] font-semibold text-chrome-bright group-hover/item:text-neon-cyan">
+                <span className="block text-[13px] font-semibold text-ink-900 group-hover/item:text-royal-deep">
                   {it.label}
                 </span>
-                <span className="block truncate font-mono text-[10px] text-chrome-dim">{it.sub}</span>
+                <span className="block truncate font-mono text-[10px] text-faint">{it.sub}</span>
               </span>
-              <IconExternal width={13} height={13} className="ml-auto mt-1 shrink-0 text-chrome-dim opacity-0 transition-opacity group-hover/item:opacity-100" />
+              <IconExternal width={13} height={13} className="ml-auto mt-1 shrink-0 text-faint opacity-0 transition-opacity group-hover/item:opacity-100" />
             </a>
           ))}
         </div>
@@ -218,7 +218,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
       <button
         type="button"
         onClick={toggle}
-        className="btn-click flex items-center gap-2 rounded-lg glass px-3 py-1.5 text-xs font-semibold text-chrome-dim transition-all hover:border-neon-magenta/40 hover:text-neon-magenta"
+        className="btn-click flex items-center gap-2 rounded-lg border border-line bg-card px-3 py-1.5 text-xs font-semibold text-faint transition-all hover:border-acc hover:text-acc-deep"
       >
         <IconSparkle width={13} height={13} />
         {open ? "Hide similar books" : "More Like This"}
@@ -246,27 +246,27 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
                 href={olUrl(b.id)}
                 target="_blank"
                 rel="noreferrer"
-                className="group/sim flex flex-col gap-1.5 rounded-lg glass p-2 transition-colors hover:bg-white/[0.03]"
+                className="card-lift group/sim flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)]"
               >
-                <div className="relative h-[100px] w-full overflow-hidden rounded bg-void-4">
+                <div className="relative h-[100px] w-full overflow-hidden rounded bg-ink-800">
                   {b.cover ? (
                     <img
                       src={`https://covers.openlibrary.org/b/id/${b.cover}-M.jpg`}
                       alt={b.title}
                       loading="lazy"
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover/sim:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-void-3 to-void-5">
-                      <span className="font-display text-2xl font-semibold neon-magenta">{b.title.charAt(0)}</span>
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-950">
+                      <span className="font-display text-2xl font-semibold text-acc">{b.title.charAt(0)}</span>
                     </div>
                   )}
                 </div>
-                <p className="line-clamp-2 text-[11px] font-semibold leading-tight text-chrome-bright group-hover/sim:text-neon-magenta">
+                <p className="line-clamp-2 text-[11px] font-semibold leading-tight text-ink-900 group-hover/sim:text-royal-deep">
                   {b.title}
                 </p>
                 {b.authors[0] && (
-                  <p className="truncate text-[10px] text-chrome-dim">{b.authors[0]}</p>
+                  <p className="truncate text-[10px] text-faint">{b.authors[0]}</p>
                 )}
               </a>
             ))
@@ -295,20 +295,20 @@ function BookRow({ book, index, onToast }: { book: Book; index: number; onToast:
 
   return (
     <li
-      className={`row-in group relative grid grid-cols-[72px_1fr] gap-4 p-4 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-white/[0.02] sm:grid-cols-[72px_1fr_auto] sm:gap-5 sm:p-5 ${
-        menuOpen ? "z-20 bg-white/[0.02]" : ""
+      className={`row-in group relative grid grid-cols-[72px_1fr] gap-4 p-4 transition-colors duration-200 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-royal-soft/40 sm:grid-cols-[72px_1fr_auto] sm:gap-5 sm:p-5 ${
+        menuOpen ? "z-20 bg-royal-soft/40" : ""
       }`}
-      style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
+      style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
     >
       <Cover book={book} />
       <div className="min-w-0">
-        <h3 className="font-display text-[17px] font-semibold leading-snug text-chrome-bright transition-colors group-hover:text-neon-cyan">
+        <h3 className="font-display text-[17px] font-semibold leading-snug text-ink-900 transition-colors group-hover:text-royal-deep">
           {book.title}
         </h3>
         {book.authors.length > 0 && (
-          <p className="mt-0.5 text-sm font-medium text-chrome-dim">{book.authors.slice(0, 4).join(", ")}</p>
+          <p className="mt-0.5 text-sm font-medium text-body">{book.authors.slice(0, 4).join(", ")}</p>
         )}
-        <p className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-chrome-dim/70">
+        <p className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-faint">
           {book.year ? book.year : "date n.d."}
           {book.publisher ? ` · ${book.publisher}` : ""}
           {book.pages ? ` · ${book.pages} p.` : ""}
@@ -316,22 +316,22 @@ function BookRow({ book, index, onToast }: { book: Book; index: number; onToast:
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           {book.ebook === "public" && (
-            <span className="rounded-md bg-neon-lime/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-neon-lime">
+            <span className="rounded-md bg-moss-soft px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-moss">
               public-domain ebook
             </span>
           )}
           {book.ebook === "borrowable" && (
-            <span className="rounded-md bg-neon-cyan/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-neon-cyan">
+            <span className="rounded-md bg-royal-soft px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-royal">
               borrowable ebook
             </span>
           )}
           {book.ia.length > 0 && (
-            <span className="rounded-md glass px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-chrome-dim">
+            <span className="rounded-md bg-ink-900/5 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-ink-600">
               on internet archive
             </span>
           )}
           {book.langs.slice(0, 2).map((l) => (
-            <span key={l} className="rounded-md glass px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-chrome-dim">
+            <span key={l} className="rounded-md border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-faint">
               {langName(l)}
             </span>
           ))}
@@ -346,7 +346,7 @@ function BookRow({ book, index, onToast }: { book: Book; index: number; onToast:
           type="button"
           onClick={copyCite}
           title="Copy citation"
-          className="btn-click flex h-9 w-9 items-center justify-center rounded-lg glass text-chrome-dim transition-all hover:border-neon-cyan/40 hover:text-neon-cyan"
+          className="btn-click flex h-9 w-9 items-center justify-center rounded-lg border border-line text-faint transition-all hover:border-royal hover:text-royal active:scale-90"
         >
           <IconCopy width={15} height={15} />
         </button>
@@ -389,10 +389,10 @@ function PdfButton({ article, onToast }: { article: Article; onToast: (m: string
 
   const style =
     state === "found"
-      ? "bg-neon-lime text-void hover:bg-[#c8ff33]"
+      ? "bg-moss text-white shadow-[0_4px_14px_rgba(47,158,99,0.35)] hover:bg-[#278a55]"
       : state === "none"
-        ? "glass text-chrome-dim hover:text-neon-cyan"
-        : "bg-neon-cyan text-void hover:bg-[#33f5ff]";
+        ? "border border-line text-faint hover:border-royal hover:text-royal"
+        : "bg-acc text-ink-950 shadow-[0_4px_14px_rgba(240,163,47,0.35)] hover:bg-[#ffbd52]";
 
   return (
     <button
@@ -441,32 +441,32 @@ function ArticleRow({
 
   return (
     <li
-      className="row-in group grid grid-cols-1 gap-4 p-4 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-white/[0.02] sm:grid-cols-[1fr_auto] sm:items-center sm:p-5"
-      style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
+      className="row-in group grid grid-cols-1 gap-4 p-4 transition-colors duration-200 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-royal-soft/40 sm:grid-cols-[1fr_auto] sm:items-center sm:p-5"
+      style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="rounded-md glass px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-chrome-dim">
+          <span className="rounded-md bg-ink-900/5 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-ink-600">
             {article.type ?? "work"}
           </span>
           {article.year && (
-            <span className="rounded-md bg-neon-cyan/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-neon-cyan">
+            <span className="rounded-md bg-acc-soft px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-acc-deep">
               {article.year}
             </span>
           )}
         </div>
-        <h3 className="mt-1.5 font-display text-[16px] font-semibold leading-snug text-chrome-bright transition-colors group-hover:text-neon-cyan">
+        <h3 className="mt-1.5 font-display text-[16px] font-semibold leading-snug text-ink-900 transition-colors group-hover:text-royal-deep">
           {article.title}
         </h3>
         {article.authors.length > 0 && (
-          <p className="mt-0.5 text-sm font-medium text-chrome-dim">
+          <p className="mt-0.5 text-sm font-medium text-body">
             {article.authors.slice(0, 5).join(", ")}
             {article.authors.length > 5 ? " et al." : ""}
           </p>
         )}
-        <p className="mt-1.5 truncate font-mono text-[11px] text-chrome-dim/70">
+        <p className="mt-1.5 truncate font-mono text-[11px] text-faint">
           {article.journal ? <span className="italic">{article.journal}</span> : "source unknown"}
-          <span className="text-white/10"> · </span>
+          <span className="text-line"> · </span>
           doi:{article.doi}
         </p>
       </div>
@@ -477,7 +477,7 @@ function ArticleRow({
           target="_blank"
           rel="noreferrer"
           title="Open DOI landing page"
-          className="btn-click flex h-9 w-9 items-center justify-center rounded-lg glass text-chrome-dim transition-all hover:border-neon-cyan/40 hover:text-neon-cyan"
+          className="btn-click flex h-9 w-9 items-center justify-center rounded-lg border border-line text-faint transition-all hover:border-royal hover:text-royal active:scale-90"
         >
           <IconExternal width={15} height={15} />
         </a>
@@ -485,7 +485,7 @@ function ArticleRow({
           type="button"
           onClick={copyCite}
           title="Copy citation"
-          className="btn-click flex h-9 w-9 items-center justify-center rounded-lg glass text-chrome-dim transition-all hover:border-neon-cyan/40 hover:text-neon-cyan"
+          className="btn-click flex h-9 w-9 items-center justify-center rounded-lg border border-line text-faint transition-all hover:border-royal hover:text-royal active:scale-90"
         >
           <IconQuote width={15} height={15} />
         </button>
@@ -500,7 +500,7 @@ function ArticleRow({
 
 function SkeletonRows() {
   return (
-    <ul className="divide-y divide-white/5">
+    <ul className="divide-y divide-line">
       {Array.from({ length: 6 }).map((_, i) => (
         <li key={i} className="flex gap-5 p-5">
           <div className="skeleton h-[104px] w-[72px] shrink-0 rounded-[4px]" />
@@ -523,19 +523,19 @@ function SkeletonRows() {
 function EmptyState({ query, onReset }: { query: string; onReset: () => void }) {
   return (
     <div className="flex flex-col items-center px-6 py-20 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-white/10 text-chrome-dim">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-line text-faint">
         <IconSearch width={30} height={30} />
       </div>
-      <h3 className="mt-5 font-display text-2xl font-semibold text-chrome-bright">
+      <h3 className="mt-5 font-display text-2xl font-semibold text-ink-900">
         Nothing on the shelves for "{query}"
       </h3>
-      <p className="mt-2 max-w-md text-sm leading-relaxed text-chrome-dim">
+      <p className="mt-2 max-w-md text-sm leading-relaxed text-faint">
         Try fewer words, an author's surname, or drop the filters — the catalog is big but not infinite.
       </p>
       <button
         type="button"
         onClick={onReset}
-        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-neon-cyan px-5 py-2.5 text-sm font-bold text-void"
+        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-ink-900 px-5 py-2.5 text-sm font-bold text-paper transition-all hover:-translate-y-0.5 hover:bg-ink-800 active:scale-95"
       >
         <IconRefresh width={15} height={15} /> Clear filters & retry
       </button>
@@ -546,15 +546,15 @@ function EmptyState({ query, onReset }: { query: string; onReset: () => void }) 
 function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div className="flex flex-col items-center px-6 py-20 text-center">
-      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neon-magenta/10 text-neon-magenta">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-rust-soft text-rust">
         <IconAlert width={32} height={32} />
       </div>
-      <h3 className="mt-5 font-display text-2xl font-semibold text-chrome-bright">The catalog hiccuped</h3>
-      <p className="mt-2 max-w-md font-mono text-xs text-chrome-dim">{message}</p>
+      <h3 className="mt-5 font-display text-2xl font-semibold text-ink-900">The catalog hiccuped</h3>
+      <p className="mt-2 max-w-md font-mono text-xs text-faint">{message}</p>
       <button
         type="button"
         onClick={onRetry}
-        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-neon-magenta px-5 py-2.5 text-sm font-bold text-void"
+        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-rust px-5 py-2.5 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#a94e2b] active:scale-95"
       >
         <IconRefresh width={15} height={15} /> Retry search
       </button>
@@ -582,7 +582,7 @@ function Pagination({
   for (let i = from; i <= to; i++) nums.push(i);
 
   const btn =
-    "btn-click flex h-9 min-w-9 items-center justify-center rounded-lg glass px-2 font-mono text-xs font-semibold text-chrome-dim transition-all hover:-translate-y-0.5 hover:border-neon-cyan/40 hover:text-neon-cyan disabled:pointer-events-none disabled:opacity-40";
+    "btn-click flex h-9 min-w-9 items-center justify-center rounded-lg border border-line bg-card px-2 font-mono text-xs font-semibold text-body transition-all hover:-translate-y-0.5 hover:border-royal hover:text-royal disabled:pointer-events-none disabled:opacity-40";
 
   return (
     <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
@@ -600,10 +600,10 @@ function Pagination({
           key={n}
           type="button"
           onClick={() => onPage(n)}
-          className={`btn-click flex h-9 min-w-9 items-center justify-center rounded-lg px-2 font-mono text-xs font-bold transition-colors ${
+          className={`btn-click flex h-9 min-w-9 items-center justify-center rounded-lg px-2 font-mono text-xs font-bold transition-all ${
             n === page
-              ? "bg-neon-cyan text-void"
-              : "glass text-chrome-dim hover:border-neon-cyan/40 hover:text-neon-cyan"
+              ? "bg-ink-900 text-acc shadow-[0_4px_14px_rgba(12,31,49,0.3)]"
+              : "border border-line bg-card text-body hover:-translate-y-0.5 hover:border-royal hover:text-royal"
           }`}
         >
           {n}
@@ -666,20 +666,20 @@ export function Results({
   const filtersDirty = filters.lang !== "" || filters.sort !== "relevance" || filters.ebookOnly;
 
   const selectCls =
-    "h-9 rounded-lg glass px-2.5 font-mono text-[11px] font-semibold uppercase tracking-wide text-chrome-dim outline-none transition-colors hover:border-neon-cyan/40 focus:border-neon-cyan/40";
+    "h-9 rounded-lg border border-line bg-card px-2.5 font-mono text-[11px] font-semibold uppercase tracking-wide text-body outline-none transition-colors hover:border-royal focus:border-royal";
 
   return (
-    <section id="catalog" className="relative scroll-mt-16 bg-void-2 py-14 sm:py-16">
+    <section id="catalog" className="relative scroll-mt-16 bg-paper py-14 sm:py-16">
+      <div className="pointer-events-none absolute inset-0 halftone opacity-50" />
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         {/* head */}
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-neon-cyan">◆ Catalog</p>
-            <h2 className="mt-1.5 font-display text-3xl font-semibold tracking-tight text-chrome-bright sm:text-4xl">
-              {loading ? "Consulting the stacks…" : `Results for "${query}"`}
-            </h2>
-            <p className="mt-1.5 font-mono text-xs text-chrome-dim" aria-live="polite">
-              {loading
+          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-royal">Catalog</p>
+          <h2 className="mt-1.5 font-display text-3xl font-semibold tracking-tight text-ink-900 sm:text-4xl">
+            {loading ? "Consulting the stacks…" : `Results for "${query}"`}
+          </h2>
+          <p className="mt-1.5 font-mono text-xs text-faint" aria-live="polite">              {loading
                 ? mode === "books"
                   ? "querying openlibrary.org"
                   : "querying api.crossref.org"
@@ -693,8 +693,8 @@ export function Results({
 
         {/* filters / meta strip */}
         {mode === "books" ? (
-          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl glass-strong px-4 py-3">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-chrome-dim">Refine</span>
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl border border-line bg-card px-4 py-3 shadow-sm">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-faint">Refine</span>
             <select
               aria-label="Sort results"
               className={selectCls}
@@ -720,41 +720,41 @@ export function Results({
                 </option>
               ))}
             </select>
-            <label className="flex cursor-pointer select-none items-center gap-2 text-sm font-medium text-chrome-dim">
+            <label className="flex cursor-pointer select-none items-center gap-2 text-sm font-medium text-body">
               <input
                 type="checkbox"
                 className="peer sr-only"
                 checked={filters.ebookOnly}
                 onChange={(e) => onFilters({ ...filters, ebookOnly: e.target.checked })}
               />
-              <span className="relative h-5 w-9 rounded-full bg-void-4 transition-colors peer-checked:bg-neon-lime after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-chrome-bright after:transition-transform peer-checked:after:translate-x-4" />
+              <span className="relative h-5 w-9 rounded-full bg-line transition-colors peer-checked:bg-moss peer-focus-visible:ring-2 peer-focus-visible:ring-royal after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-4" />
               Only with ebooks
             </label>
             {filtersDirty && (
               <button
                 type="button"
                 onClick={onReset}
-                className="ml-auto font-mono text-[11px] font-semibold uppercase tracking-wide text-neon-magenta transition-colors hover:text-[#ff33ee]"
+                className="ml-auto font-mono text-[11px] font-semibold uppercase tracking-wide text-rust transition-colors hover:text-[#a94e2b]"
               >
                 reset ×
               </button>
             )}
           </div>
         ) : (
-          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-xl glass-strong px-4 py-3 font-mono text-[11px] text-chrome-dim">
-            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neon-cyan/10 text-neon-cyan">
+          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-xl border border-line bg-card px-4 py-3 font-mono text-[11px] text-faint shadow-sm">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-acc-soft text-acc-deep">
               <IconArticle width={13} height={13} />
             </span>
-            metadata via <strong className="text-chrome-bright">CrossRef</strong>
-            <span className="text-white/10">·</span>
-            "Find PDF" resolves open-access copies through <strong className="text-chrome-bright">Unpaywall</strong>
-            <span className="text-white/10">·</span>
+            metadata via <strong className="text-body">CrossRef</strong>
+            <span className="text-line">·</span>
+            "Find PDF" resolves open-access copies through <strong className="text-body">Unpaywall</strong>
+            <span className="text-line">·</span>
             every DOI opens its publisher page
           </div>
         )}
 
         {/* list */}
-        <div className="relative mt-6 rounded-2xl glass-strong">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-line bg-card shadow-[0_10px_40px_rgba(12,31,49,0.07)]">
           {loading ? (
             <SkeletonRows />
           ) : error ? (
@@ -762,13 +762,13 @@ export function Results({
           ) : total === 0 ? (
             <EmptyState query={query} onReset={onReset} />
           ) : mode === "books" ? (
-            <ul className="divide-y divide-white/5">
+            <ul className="divide-y divide-line">
               {books.map((b, i) => (
                 <BookRow key={`${b.id}-${page}-${i}`} book={b} index={i} onToast={onToast} />
               ))}
             </ul>
           ) : (
-            <ul className="divide-y divide-white/5">
+            <ul className="divide-y divide-line">
               {articles.map((a, i) => (
                 <ArticleRow key={`${a.doi}-${i}`} article={a} index={i} onToast={onToast} />
               ))}
@@ -777,7 +777,7 @@ export function Results({
         </div>
 
         {!loading && !error && total > 0 && (
-          <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-chrome-dim">
+          <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-faint">
             {mode === "books"
               ? "covers & records · open library"
               : "scholarly metadata · crossref / unpaywall"}
