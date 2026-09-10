@@ -213,7 +213,7 @@ function SimilarBookCard({ book }: { book: Book }) {
         <button
           type="button"
           onClick={() => setShowDetail(true)}
-          className="group/simcover relative cursor-pointer overflow-hidden focus-ring"
+          className="group/simcover relative cursor-pointer focus-ring"
           aria-label={`View details for ${book.title}`}
         >
           <div className="relative aspect-[2/3] w-full overflow-hidden rounded bg-ink-800">
@@ -230,12 +230,12 @@ function SimilarBookCard({ book }: { book: Book }) {
                 <span className="font-display text-xl font-semibold text-acc">{book.title.charAt(0)}</span>
               </div>
             )}
-          </div>
-          <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded bg-ink-950/0 transition-colors duration-200 group-hover/simcover:bg-ink-950/40">
-            <span className="rounded-full bg-acc px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-wider text-ink-950 opacity-0 transition-opacity duration-200 group-hover/simcover:opacity-100">
-              View Info
+            <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded bg-ink-950/0 transition-colors duration-200 group-hover/simcover:bg-ink-950/40">
+              <span className="rounded-full bg-acc px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-wider text-ink-950 opacity-0 transition-opacity duration-200 group-hover/simcover:opacity-100">
+                View Info
+              </span>
             </span>
-          </span>
+          </div>
         </button>
         <div className="flex flex-col flex-1">
           <button
@@ -397,15 +397,32 @@ export function BookCard({
     >        <button
           type="button"
           onClick={() => setShowDetail(true)}
-          className="group/cover relative cursor-pointer overflow-hidden focus-ring"
+          className="group/cover relative cursor-pointer focus-ring"
           aria-label={`View details for ${book.title}`}
         >
-          <Cover book={book} />
-          <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-[4px] bg-ink-950/0 transition-colors duration-200 group-hover/cover:bg-ink-950/40">
-            <span className="rounded-full bg-acc px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-wider text-ink-950 opacity-0 transition-opacity duration-200 group-hover/cover:opacity-100">
-              View Info
+          <div className="relative aspect-[2/3] h-[140px] shrink-0 overflow-hidden rounded-[4px] bg-ink-800 shadow-[3px_5px_0_rgba(12,31,49,0.16)] ring-1 ring-black/10">
+            {book.cover ? (
+              <img
+                src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                alt={`Cover of ${book.title}`}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-ink-700 to-ink-950">
+                <span className="font-display text-3xl font-semibold text-acc">{book.title.charAt(0)}</span>
+                <span className="px-1.5 text-center font-mono text-[7px] uppercase leading-tight tracking-wider text-paper/60">
+                  {book.title.slice(0, 30)}
+                </span>
+              </div>
+            )}
+            <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-[4px] bg-ink-950/0 transition-colors duration-200 group-hover/cover:bg-ink-950/40">
+              <span className="rounded-full bg-acc px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-wider text-ink-950 opacity-0 transition-opacity duration-200 group-hover/cover:opacity-100">
+                View Info
+              </span>
             </span>
-          </span>
+          </div>
         </button>
         <div className="min-w-0">
           <h3 className="font-display text-[16px] font-semibold leading-snug text-ink-900 transition-colors group-hover:text-royal-deep">
