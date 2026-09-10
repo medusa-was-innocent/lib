@@ -282,7 +282,7 @@ export function BookDetailModal({
                 />
               </button>
               {menuOpen && (
-                <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[260px] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)]">
+                <div className="animate-pop-in absolute left-0 top-full z-[1050] mt-2 w-[260px] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)]">
                   {items.map((it) => (
                     <a
                       key={it.label}

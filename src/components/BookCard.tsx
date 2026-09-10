@@ -130,7 +130,7 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
         <IconChevron width={11} height={11} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="animate-pop-in absolute left-0 top-full z-30 mt-2 w-[260px] max-w-[calc(100vw-2rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)] sm:left-auto sm:right-0">
+        <div className="animate-pop-in absolute left-0 top-full z-[1000] mt-2 w-[260px] max-w-[calc(100vw-2rem)] rounded-xl border border-line bg-card p-1.5 shadow-[0_18px_50px_rgba(12,31,49,0.22)] sm:left-auto sm:right-0">
           {items.map((it) => (
             <a
               key={it.label}
@@ -263,7 +263,7 @@ function SimilarBookCard({ book }: { book: Book }) {
           <IconChevron width={9} height={9} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
         </button>
         {menuOpen && (
-          <div className="animate-pop-in absolute bottom-full left-0 z-50 mb-1 w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]">
+          <div className="animate-pop-in absolute bottom-full left-0 z-[1000] mb-1 w-[200px] rounded-lg border border-line bg-card p-1 shadow-[0_8px_20px_rgba(12,31,49,0.15)]">
             {items.map((it) => (
               <a
                 key={it.label}
@@ -390,7 +390,7 @@ export function BookCard({
   return (
     <>
     <li
-      className={`book-lift card-contain row-in group relative grid grid-cols-[93px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[93px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
+      className={`book-lift row-in group relative grid grid-cols-[93px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[93px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
         menuOpen ? "z-20" : ""
       }`}
       style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
