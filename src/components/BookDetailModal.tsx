@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { Book, BookDetail } from "../lib/api";
 import { fetchBookDetail } from "../lib/api";
 import {
@@ -198,7 +199,7 @@ export function BookDetailModal({
     }
   );
 
-  return (
+  return createPortal(
     <div 
       className="fixed inset-0 z-[9999] bg-ink-950/60"
       onClick={onClose}
@@ -443,6 +444,7 @@ export function BookDetailModal({
         </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
