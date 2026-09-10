@@ -50,10 +50,7 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
 
   return (
     <>
-      <section id="how" className="scanlines relative overflow-hidden bg-void py-16 text-chrome sm:py-20">
-        <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-neon-cyan/8 blur-[130px]" />
-        <div className="pointer-events-none absolute -left-24 bottom-0 h-[320px] w-[320px] rounded-full bg-neon-magenta/6 blur-[110px]" />
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
+      <section id="how" className="relative overflow-hidden bg-void py-16 text-chrome sm:py-20">
 
         <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
           <Reveal>
@@ -90,7 +87,7 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
                       href={s.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="btn-click group flex items-center justify-between gap-3 rounded-xl glass-strong px-4 py-3.5 transition-all hover:-translate-y-1 hover:border-neon-cyan/40 hover:shadow-[0_0_20px_rgba(0,240,255,0.15)]"
+                      className="btn-click group flex items-center justify-between gap-3 rounded-xl glass-strong px-4 py-3.5 transition-colors hover:border-neon-cyan/40"
                     >
                       <span>
                         <span className="block font-display text-base font-semibold text-chrome-bright group-hover:text-neon-cyan">
@@ -114,7 +111,7 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
             {/* terminal */}
             <Reveal delay={120}>
               <div id="run" className="scroll-mt-24">
-                <div className="overflow-hidden rounded-2xl glass-strong shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
+                <div className="overflow-hidden rounded-2xl glass-strong">
                   <div className="flex items-center justify-between border-b border-white/5 bg-void/80 px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="h-3 w-3 rounded-full bg-neon-magenta" />

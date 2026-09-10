@@ -246,7 +246,7 @@ export default function App() {
         <div
           key={toast.id}
           role="status"
-          className="animate-toast-in fixed bottom-6 right-6 z-[80] flex items-center gap-3 rounded-xl glass-strong px-4 py-3 text-sm font-semibold text-chrome-bright shadow-[0_18px_50px_rgba(0,0,0,0.5)]"
+          className="animate-toast-in fixed bottom-6 right-6 z-[80] flex items-center gap-3 rounded-xl glass-strong px-4 py-3 text-sm font-semibold text-chrome-bright"
         >
           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neon-lime/20 text-neon-lime">
             <IconCheck width={13} height={13} />

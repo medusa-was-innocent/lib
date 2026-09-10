@@ -43,7 +43,7 @@ function Cover({ book }: { book: Book }) {
   const [failed, setFailed] = useState(false);
   const showImg = !!book.cover && !failed;
   return (
-    <div className="relative h-[104px] w-[72px] shrink-0 overflow-hidden rounded-[4px] bg-void-4 shadow-[3px_5px_0_rgba(0,0,0,0.3)] ring-1 ring-white/10 transition-transform duration-300 group-hover:-translate-y-1 group-hover:-rotate-1">
+    <div className="relative h-[104px] w-[72px] shrink-0 overflow-hidden rounded-[4px] bg-void-4 ring-1 ring-white/10">
       {showImg ? (
         <img
           src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
@@ -51,7 +51,7 @@ function Cover({ book }: { book: Book }) {
           loading="lazy"
           onLoad={() => setLoaded(true)}
           onError={() => setFailed(true)}
-          className={`h-full w-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+          className={`h-full w-full object-cover ${loaded ? "opacity-100" : "opacity-0"}`}
         />
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-gradient-to-br from-void-3 to-void-5">
@@ -69,7 +69,7 @@ function Cover({ book }: { book: Book }) {
 /*  Download source menu (per book) — Y2K chrome style                 */
 /* ------------------------------------------------------------------ */
 
-type MenuItem = { label: string; sub: string; href: string; icon: React.ReactNode; glow: string };
+type MenuItem = { label: string; sub: string; href: string; icon: React.ReactNode };
 
 function DownloadMenu({
   book,
@@ -103,7 +103,6 @@ function DownloadMenu({
       sub: `${book.ia[0]} · PDF · EPUB · borrow`,
       href: archiveUrl(book.ia[0]),
       icon: <IconFileDown width={15} height={15} />,
-      glow: "hover:shadow-[0_0_12px_rgba(184,255,0,0.3)]",
     });
   }
   items.push(
@@ -112,35 +111,30 @@ function DownloadMenu({
       sub: "web results with author",
       href: googleSearchUrl(book),
       icon: <IconSearch width={15} height={15} />,
-      glow: "hover:shadow-[0_0_12px_rgba(0,240,255,0.3)]",
     },
     {
       label: "Google Books",
       sub: "preview & publisher links",
       href: googleBooksUrl(book),
       icon: <IconBook width={15} height={15} />,
-      glow: "hover:shadow-[0_0_12px_rgba(0,240,255,0.3)]",
     },
     {
       label: "Anna's Archive",
       sub: "shadow-library aggregator",
       href: annasUrl(book),
       icon: <IconGlobe width={15} height={15} />,
-      glow: "hover:shadow-[0_0_12px_rgba(255,0,229,0.3)]",
     },
     {
       label: "Z-Library",
       sub: "z-library.sk — official portal",
       href: zLibraryUrl(book),
       icon: <LogoMark size={15} />,
-      glow: "hover:shadow-[0_0_12px_rgba(255,0,229,0.3)]",
     },
     {
       label: "Open Library record",
       sub: "borrow & preview editions",
       href: olUrl(book.id),
       icon: <IconBook width={15} height={15} />,
-      glow: "hover:shadow-[0_0_12px_rgba(0,240,255,0.3)]",
     }
   );
 
@@ -149,7 +143,7 @@ function DownloadMenu({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="btn-click flex items-center gap-2 rounded-lg bg-gradient-to-b from-neon-lime to-[#8acc00] px-4 py-2 text-sm font-bold text-void shadow-[0_4px_14px_rgba(184,255,0,0.35)] transition-all hover:shadow-[0_6px_20px_rgba(184,255,0,0.45)]"
+        className="btn-click flex items-center gap-2 rounded-lg bg-neon-lime px-4 py-2 text-sm font-bold text-void transition-colors hover:bg-[#c8ff33]"
       >
         <IconDownload width={15} height={15} />
         {book.ia.length > 0 ? "Download" : "Sources"}
@@ -164,7 +158,7 @@ function DownloadMenu({
               target="_blank"
               rel="noreferrer"
               onClick={() => setOpen(false)}
-              className={`group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition-all ${it.glow}`}
+              className="group/item flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5"
             >
               <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md glass text-chrome-dim transition-colors group-hover/item:text-neon-cyan">
                 {it.icon}
@@ -252,7 +246,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
                 href={olUrl(b.id)}
                 target="_blank"
                 rel="noreferrer"
-                className="card-lift group/sim flex flex-col gap-1.5 rounded-lg glass p-2 transition-all hover:border-neon-magenta/40 hover:shadow-[0_0_16px_rgba(255,0,229,0.2)]"
+                className="group/sim flex flex-col gap-1.5 rounded-lg glass p-2 transition-colors hover:bg-white/[0.03]"
               >
                 <div className="relative h-[100px] w-full overflow-hidden rounded bg-void-4">
                   {b.cover ? (
@@ -260,7 +254,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
                       src={`https://covers.openlibrary.org/b/id/${b.cover}-M.jpg`}
                       alt={b.title}
                       loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover/sim:scale-105"
+                      className="h-full w-full object-cover"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-void-3 to-void-5">
@@ -301,10 +295,10 @@ function BookRow({ book, index, onToast }: { book: Book; index: number; onToast:
 
   return (
     <li
-      className={`row-in group relative grid grid-cols-[72px_1fr] gap-4 p-4 transition-colors duration-200 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-neon-cyan/[0.03] sm:grid-cols-[72px_1fr_auto] sm:gap-5 sm:p-5 ${
-        menuOpen ? "z-20 bg-neon-cyan/[0.03]" : ""
+      className={`row-in group relative grid grid-cols-[72px_1fr] gap-4 p-4 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-white/[0.02] sm:grid-cols-[72px_1fr_auto] sm:gap-5 sm:p-5 ${
+        menuOpen ? "z-20 bg-white/[0.02]" : ""
       }`}
-      style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
+      style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
     >
       <Cover book={book} />
       <div className="min-w-0">
@@ -395,16 +389,16 @@ function PdfButton({ article, onToast }: { article: Article; onToast: (m: string
 
   const style =
     state === "found"
-      ? "bg-gradient-to-b from-neon-lime to-[#8acc00] text-void shadow-[0_4px_14px_rgba(184,255,0,0.35)] hover:shadow-[0_6px_20px_rgba(184,255,0,0.45)]"
+      ? "bg-neon-lime text-void hover:bg-[#c8ff33]"
       : state === "none"
-        ? "glass text-chrome-dim hover:border-neon-cyan/40 hover:text-neon-cyan"
-        : "bg-gradient-to-b from-neon-cyan to-[#00b8cc] text-void shadow-[0_4px_14px_rgba(0,240,255,0.35)] hover:shadow-[0_6px_20px_rgba(0,240,255,0.45)]";
+        ? "glass text-chrome-dim hover:text-neon-cyan"
+        : "bg-neon-cyan text-void hover:bg-[#33f5ff]";
 
   return (
     <button
       type="button"
       onClick={click}
-      className={`btn-click flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-all ${style}`}
+      className={`btn-click flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold transition-colors ${style}`}
     >
       {state === "loading" ? (
         <>
@@ -447,8 +441,8 @@ function ArticleRow({
 
   return (
     <li
-      className="row-in group grid grid-cols-1 gap-4 p-4 transition-colors duration-200 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-neon-cyan/[0.03] sm:grid-cols-[1fr_auto] sm:items-center sm:p-5"
-      style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
+      className="row-in group grid grid-cols-1 gap-4 p-4 first:rounded-t-[14px] last:rounded-b-[14px] hover:bg-white/[0.02] sm:grid-cols-[1fr_auto] sm:items-center sm:p-5"
+      style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -541,7 +535,7 @@ function EmptyState({ query, onReset }: { query: string; onReset: () => void }) 
       <button
         type="button"
         onClick={onReset}
-        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-gradient-to-b from-neon-cyan to-[#00b8cc] px-5 py-2.5 text-sm font-bold text-void transition-transform active:scale-95"
+        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-neon-cyan px-5 py-2.5 text-sm font-bold text-void"
       >
         <IconRefresh width={15} height={15} /> Clear filters & retry
       </button>
@@ -560,7 +554,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
       <button
         type="button"
         onClick={onRetry}
-        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-gradient-to-b from-neon-magenta to-[#cc00b8] px-5 py-2.5 text-sm font-bold text-void transition-transform active:scale-95"
+        className="btn-click mt-6 flex items-center gap-2 rounded-lg bg-neon-magenta px-5 py-2.5 text-sm font-bold text-void"
       >
         <IconRefresh width={15} height={15} /> Retry search
       </button>
@@ -606,10 +600,10 @@ function Pagination({
           key={n}
           type="button"
           onClick={() => onPage(n)}
-          className={`btn-click flex h-9 min-w-9 items-center justify-center rounded-lg px-2 font-mono text-xs font-bold transition-all ${
+          className={`btn-click flex h-9 min-w-9 items-center justify-center rounded-lg px-2 font-mono text-xs font-bold transition-colors ${
             n === page
-              ? "bg-gradient-to-b from-neon-cyan to-[#00b8cc] text-void shadow-[0_4px_14px_rgba(0,240,255,0.35)]"
-              : "glass text-chrome-dim hover:-translate-y-0.5 hover:border-neon-cyan/40 hover:text-neon-cyan"
+              ? "bg-neon-cyan text-void"
+              : "glass text-chrome-dim hover:border-neon-cyan/40 hover:text-neon-cyan"
           }`}
         >
           {n}
@@ -676,7 +670,6 @@ export function Results({
 
   return (
     <section id="catalog" className="relative scroll-mt-16 bg-void-2 py-14 sm:py-16">
-      <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
       <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
         {/* head */}
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -700,7 +693,7 @@ export function Results({
 
         {/* filters / meta strip */}
         {mode === "books" ? (
-          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl glass-strong px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.3)]">
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl glass-strong px-4 py-3">
             <span className="font-mono text-[10px] uppercase tracking-widest text-chrome-dim">Refine</span>
             <select
               aria-label="Sort results"
@@ -734,7 +727,7 @@ export function Results({
                 checked={filters.ebookOnly}
                 onChange={(e) => onFilters({ ...filters, ebookOnly: e.target.checked })}
               />
-              <span className="relative h-5 w-9 rounded-full bg-void-4 transition-colors peer-checked:bg-neon-lime peer-focus-visible:ring-2 peer-focus-visible:ring-neon-cyan after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-chrome-bright after:shadow after:transition-transform peer-checked:after:translate-x-4" />
+              <span className="relative h-5 w-9 rounded-full bg-void-4 transition-colors peer-checked:bg-neon-lime after:absolute after:left-0.5 after:top-0.5 after:h-4 after:w-4 after:rounded-full after:bg-chrome-bright after:transition-transform peer-checked:after:translate-x-4" />
               Only with ebooks
             </label>
             {filtersDirty && (
@@ -748,7 +741,7 @@ export function Results({
             )}
           </div>
         ) : (
-          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-xl glass-strong px-4 py-3 font-mono text-[11px] text-chrome-dim shadow-[0_10px_40px_rgba(0,0,0,0.3)]">
+          <div className="mt-6 flex flex-wrap items-center gap-2 rounded-xl glass-strong px-4 py-3 font-mono text-[11px] text-chrome-dim">
             <span className="flex h-6 w-6 items-center justify-center rounded-md bg-neon-cyan/10 text-neon-cyan">
               <IconArticle width={13} height={13} />
             </span>
@@ -761,7 +754,7 @@ export function Results({
         )}
 
         {/* list */}
-        <div className="relative mt-6 rounded-2xl glass-strong shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
+        <div className="relative mt-6 rounded-2xl glass-strong">
           {loading ? (
             <SkeletonRows />
           ) : error ? (
