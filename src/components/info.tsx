@@ -6,17 +6,17 @@ const STEPS = [
   {
     n: "01",
     title: "Type once, search everything",
-    body: "One box queries Open Library's 20M+ book records or CrossRef's 150M+ article records — the same search-then-fetch flow as the original Streamlit script, rebuilt to run entirely in your browser.",
+    body: "One box queries Open Library's 20M+ book records or CrossRef's 150M+ article records — rebuilt to run entirely in your browser with debounced search and session caching.",
   },
   {
     n: "02",
-    title: "Records are matched to real copies",
-    body: "Book rows carry their Internet Archive identifiers; article rows resolve through Unpaywall to legal open-access PDFs. No dead links, no fake buttons.",
+    title: "Records matched to real copies",
+    body: "Book rows carry Internet Archive identifiers; article rows resolve through Unpaywall to legal open-access PDFs. No dead links, no fake buttons.",
   },
   {
     n: "03",
     title: "Download from the source",
-    body: "Every button opens the actual file page in a new tab: Archive.org readers and PDFs, OA papers, plus one-click jumps to Google Books, Anna's Archive, Z-Library, and Open Library.",
+    body: "Every button opens the actual file page: Archive.org, Google Books, Anna's Archive, Z-Library, and Open Library. Author names are auto-appended to every query.",
   },
 ];
 
@@ -44,65 +44,61 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
       onToast("Terminal commands copied");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      onToast("Couldn't access the clipboard");
+      onToast("Couldn't access clipboard");
     }
   };
 
   return (
     <>
-      <section id="how" className="noise relative overflow-hidden bg-ink-950 py-16 text-paper sm:py-20">
-        <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-royal/20 blur-[130px]" />
-        <div className="pointer-events-none absolute -left-24 bottom-0 h-[320px] w-[320px] rounded-full bg-acc/10 blur-[110px]" />
-
-        <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+      <section id="how" className="relative overflow-hidden bg-void py-14 text-chrome sm:py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-acc">How it works</p>
-            <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-[1.1]">
-              From search box to <span className="italic text-acc">saved file</span> — three moves.
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-neon-cyan">How it works</p>
+            <h2 className="mt-2 max-w-2xl font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+              From search box to <span className="text-holo">saved file</span> — three moves.
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:gap-14">
-            {/* steps + sources */}
+          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-12">
             <div>
-              <ol className="space-y-8">
+              <ol className="space-y-6">
                 {STEPS.map((s, i) => (
-                  <Reveal key={s.n} delay={i * 110}>
-                    <li className="group flex gap-5">
-                      <span className="font-display text-4xl font-light italic text-acc/80 transition-colors group-hover:text-acc">
+                  <Reveal key={s.n} delay={i * 100}>
+                    <li className="group flex gap-4">
+                      <span className="font-display text-3xl font-light italic text-neon-cyan/70 transition-colors group-hover:text-neon-cyan">
                         {s.n}
                       </span>
-                      <div className="border-l border-ink-700 pl-5 transition-colors group-hover:border-acc/60">
-                        <h3 className="text-lg font-bold text-paper">{s.title}</h3>
-                        <p className="mt-1.5 text-sm leading-relaxed text-[#9db2c7]">{s.body}</p>
+                      <div className="border-l border-white/10 pl-4 transition-colors group-hover:border-neon-cyan/40">
+                        <h3 className="text-base font-bold text-chrome-bright">{s.title}</h3>
+                        <p className="mt-1 text-xs leading-relaxed text-chrome-dim">{s.body}</p>
                       </div>
                     </li>
                   </Reveal>
                 ))}
               </ol>
 
-              <Reveal delay={140}>
-                <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Reveal delay={120}>
+                <div className="mt-8 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {SOURCES.map((s) => (
                     <a
                       key={s.name}
                       href={s.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="group flex items-center justify-between gap-3 rounded-xl border border-ink-700 bg-ink-900/70 px-4 py-3.5 transition-all hover:-translate-y-1 hover:border-acc"
+                      className="btn-click group flex items-center justify-between gap-2 rounded-lg border border-panel-border px-3 py-2.5 transition-colors hover:border-neon-cyan/40"
                     >
                       <span>
-                        <span className="block font-display text-base font-semibold text-paper group-hover:text-acc">
+                        <span className="block font-display text-sm font-semibold text-chrome-bright group-hover:text-neon-cyan">
                           {s.name}
                         </span>
-                        <span className="block font-mono text-[10px] uppercase tracking-wider text-[#7f95ab]">
+                        <span className="block font-mono text-[9px] uppercase tracking-wider text-chrome-dim">
                           {s.stat}
                         </span>
                       </span>
                       <IconArrowRight
-                        width={16}
-                        height={16}
-                        className="shrink-0 text-[#7f95ab] transition-all group-hover:translate-x-1 group-hover:text-acc"
+                        width={14}
+                        height={14}
+                        className="shrink-0 text-chrome-dim transition-transform group-hover:translate-x-0.5 group-hover:text-neon-cyan"
                       />
                     </a>
                   ))}
@@ -110,57 +106,55 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
               </Reveal>
             </div>
 
-            {/* terminal */}
-            <Reveal delay={120}>
+            <Reveal delay={100}>
               <div id="run" className="scroll-mt-24">
-                <div className="overflow-hidden rounded-2xl border border-ink-700 bg-ink-900 shadow-[0_30px_80px_rgba(0,0,0,0.5)]">
-                  <div className="flex items-center justify-between border-b border-ink-700 bg-ink-950/80 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="h-3 w-3 rounded-full bg-rust" />
-                      <span className="h-3 w-3 rounded-full bg-acc" />
-                      <span className="h-3 w-3 rounded-full bg-moss" />
+                <div className="overflow-hidden rounded-lg border border-panel-border bg-void-2">
+                  <div className="flex items-center justify-between border-b border-white/5 bg-void-3 px-3 py-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-neon-magenta" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-neon-lime" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-neon-cyan" />
                     </div>
-                    <span className="flex items-center gap-2 font-mono text-[11px] text-[#7f95ab]">
-                      <IconTerminal width={14} height={14} />
-                      zLibrary — the original (Python + Streamlit)
+                    <span className="flex items-center gap-1.5 font-mono text-[10px] text-chrome-dim">
+                      <IconTerminal width={12} height={12} />
+                      zLibrary — the original
                     </span>
                     <button
                       type="button"
                       onClick={copyAll}
-                      className="flex items-center gap-1.5 rounded-md border border-ink-600 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-[#9db2c7] transition-all hover:border-acc hover:text-acc active:scale-95"
+                      className="btn-click flex items-center gap-1 rounded border border-panel-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-chrome-dim transition-colors hover:border-neon-cyan hover:text-neon-cyan"
                     >
-                      {copied ? <IconCheck width={12} height={12} className="text-moss" /> : <IconCopy width={12} height={12} />}
+                      {copied ? <IconCheck width={10} height={10} className="text-neon-lime" /> : <IconCopy width={10} height={10} />}
                       {copied ? "copied" : "copy"}
                     </button>
                   </div>
-                  <div className="space-y-2.5 px-5 py-6 font-mono text-[13px] leading-relaxed">
+                  <div className="space-y-1.5 px-4 py-4 font-mono text-[12px] leading-relaxed">
                     {CMDS.map((c) => (
-                      <p key={c} className="text-[#c6d4e2]">
-                        <span className="mr-2 select-none text-acc">➜</span>
-                        <span className="mr-2 select-none text-royal">~</span>
+                      <p key={c} className="text-chrome">
+                        <span className="mr-2 select-none neon-cyan">➜</span>
+                        <span className="mr-2 select-none text-neon-magenta">~</span>
                         {c}
                       </p>
                     ))}
-                    <p className="text-[#7f95ab]">
-                      <span className="mr-2 select-none text-acc">➜</span>
-                      <span className="text-moss">Streamlit server started on http://localhost:8501</span>
-                      <span className="caret ml-1 inline-block h-4 w-2 translate-y-0.5 bg-acc" />
+                    <p className="text-chrome-dim">
+                      <span className="mr-2 select-none neon-cyan">➜</span>
+                      <span className="text-neon-lime">Streamlit server started on http://localhost:8501</span>
+                      <span className="caret ml-1 inline-block h-3 w-1.5 translate-y-0.5 bg-neon-cyan" />
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-xl border border-ink-700/80 bg-ink-900/60 px-5 py-4">
-                  <h3 className="flex items-center gap-2 text-sm font-bold text-paper">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-acc-soft text-acc-deep">
-                      <IconTerminal width={13} height={13} />
+                <div className="mt-4 rounded-lg border border-panel-border px-4 py-3">
+                  <h3 className="flex items-center gap-2 text-xs font-bold text-chrome-bright">
+                    <span className="flex h-5 w-5 items-center justify-center rounded bg-neon-cyan/10 text-neon-cyan">
+                      <IconTerminal width={11} height={11} />
                     </span>
                     Why a browser rebuild?
                   </h3>
-                  <p className="mt-2 text-[13px] leading-relaxed text-[#9db2c7]">
-                    The original script calls Z-Library's private API straight from Python. Browsers refuse those
-                    calls (CORS) and the endpoints rotate constantly — which is why the repo "doesn't work" outside
-                    its own machine. This edition searches stable public catalogs instead, and keeps direct links
-                    to Z-Library, Anna's Archive, and Google Books inside every book's download menu.
+                  <p className="mt-1.5 text-[11px] leading-relaxed text-chrome-dim">
+                    The original script calls Z-Library's private API from Python. Browsers refuse those
+                    calls (CORS) and endpoints rotate constantly. This edition searches stable public catalogs
+                    and keeps direct links to Z-Library, Anna's Archive, and Google Books in every download menu.
                   </p>
                 </div>
               </div>
@@ -169,31 +163,30 @@ export function Info({ onToast }: { onToast: (m: string) => void }) {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-ink-950 py-8 text-paper">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-5 sm:px-8 md:flex-row md:items-center">
-          <div className="flex items-center gap-3">
-            <LogoMark size={28} />
+      <footer className="border-t border-white/5 bg-void py-6 text-chrome">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-5 sm:px-8 md:flex-row md:items-center">
+          <div className="flex items-center gap-2.5">
+            <LogoMark size={26} />
             <div>
-              <p className="font-display text-lg font-semibold leading-tight">
-                <span className="italic text-acc">Bibliothēkē</span> <span className="text-[#7f95ab]">· web edition</span>
+              <p className="font-display text-base font-semibold leading-tight">
+                <span className="text-holo">Bibliothēkē</span> <span className="text-chrome-dim">· web edition</span>
               </p>
-              <p className="font-mono text-[10px] uppercase tracking-wider text-[#7f95ab]">
-                rebuilt in react — after Devanshu-17/zLibrary (python + streamlit)
+              <p className="font-mono text-[9px] uppercase tracking-wider text-chrome-dim">
+                rebuilt in react — after Devanshu-17/zLibrary
               </p>
             </div>
           </div>
-          <div className="flex flex-col gap-1.5 md:items-end">
+          <div className="flex flex-col gap-1 md:items-end">
             <a
               href="https://github.com/Devanshu-17/zLibrary"
               target="_blank"
               rel="noreferrer"
-              className="font-mono text-xs text-[#9db2c7] underline decoration-ink-600 underline-offset-4 transition-colors hover:text-acc"
+              className="font-mono text-[11px] text-chrome-dim underline decoration-white/10 underline-offset-4 transition-colors hover:text-neon-cyan"
             >
               github.com/Devanshu-17/zLibrary
             </a>
-            <p className="max-w-md text-right font-mono text-[10px] leading-relaxed text-[#5f7590]">
-              catalog data © Open Library · CrossRef · Internet Archive. External links open in new tabs — please
-              respect your local copyright law.
+            <p className="max-w-md text-right font-mono text-[9px] leading-relaxed text-chrome-dim/60">
+              catalog data © Open Library · CrossRef · Internet Archive. External links open in new tabs.
             </p>
           </div>
         </div>

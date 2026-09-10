@@ -4,11 +4,16 @@ import { searchArticles, searchBooks } from "./lib/api";
 import { Masthead, StickyBar } from "./components/masthead";
 import { Results } from "./components/results";
 import { Info } from "./components/info";
+import { LibraryCard } from "./components/LibraryCard";
 import { IconCheck } from "./components/icons";
+import { useDebouncedValue, usePerfMode, getCached, setCached } from "./lib/perf";
+import { useSavedBooks } from "./lib/storage";
+import { unlockAudio } from "./lib/sound";
 
 const DEFAULT_FILTERS: BookFilters = { lang: "", sort: "relevance", ebookOnly: false };
 const PRELOAD = "sherlock holmes";
 const RECENT_KEY = "bibliotheke-recent";
+const DEBOUNCE_MS = 500;
 
 function loadRecent(): string[] {
   try {
@@ -37,23 +42,31 @@ export default function App() {
   const [toast, setToast] = useState<{ id: number; msg: string } | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
+  const [perfMode, setPerfMode] = usePerfMode();
+  const { saved, isSaved, toggleSave, count: savedCount } = useSavedBooks();
+  const [lastStamp, setLastStamp] = useState<"SAVED" | "ARCHIVED" | "CHECKED OUT" | null>(null);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const stickyRef = useRef<HTMLInputElement>(null);
   const reqRef = useRef(0);
   const abortRef = useRef<AbortController | null>(null);
   const scrolledRef = useRef(false);
-  const cacheRef = useRef(new Map<string, { books: Book[]; articles: Article[]; total: number }>());
 
-  /* ---------- fetch orchestration ---------- */
+  // Debounce the query for auto-search (but we still use manual search on submit)
+  const debouncedQuery = useDebouncedValue(query, DEBOUNCE_MS);
+
+  /* ---------- Fetch orchestration with caching ---------- */
 
   const run = useCallback(async (m: Mode, q: string, p: number, f: BookFilters) => {
     const id = ++reqRef.current;
-    const key = [m, q, p, f.lang, f.sort, f.ebookOnly].join("|");
-    const hit = cacheRef.current.get(key);
-    if (hit) {
-      setBooks(hit.books);
-      setArticles(hit.articles);
-      setTotal(hit.total);
+    const cacheKey = `${m}|${q}|${p}|${f.lang}|${f.sort}|${f.ebookOnly}`;
+
+    // Check cache first
+    const cached = getCached<{ books: Book[]; articles: Article[]; total: number }>(cacheKey);
+    if (cached) {
+      setBooks(cached.books);
+      setArticles(cached.articles);
+      setTotal(cached.total);
       setLoading(false);
       setError(null);
       return;
@@ -72,14 +85,14 @@ export default function App() {
         setBooks(r.items);
         setArticles([]);
         setTotal(r.total);
-        cacheRef.current.set(key, { books: r.items, articles: [], total: r.total });
+        setCached(cacheKey, { books: r.items, articles: [], total: r.total });
       } else {
         const r = await searchArticles(q, p, ctl.signal);
         if (id !== reqRef.current) return;
         setArticles(r.items);
         setBooks([]);
         setTotal(r.total);
-        cacheRef.current.set(key, { books: [], articles: r.items, total: r.total });
+        setCached(cacheKey, { books: [], articles: r.items, total: r.total });
       }
     } catch (err: unknown) {
       const e = err as { name?: string; message?: string };
@@ -93,12 +106,12 @@ export default function App() {
     }
   }, []);
 
-  /* preload the catalog so the page opens alive */
+  // Preload
   useEffect(() => {
     run("books", PRELOAD, 1, DEFAULT_FILTERS);
   }, [run]);
 
-  /* ---------- actions ---------- */
+  /* ---------- Actions ---------- */
 
   const showToast = useCallback((msg: string) => setToast({ id: Date.now(), msg }), []);
 
@@ -112,7 +125,7 @@ export default function App() {
     try {
       localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
     } catch {
-      /* private mode — ignore */
+      /* ignore */
     }
   }, [recent]);
 
@@ -169,11 +182,26 @@ export default function App() {
     run(mode, active.q, 1, DEFAULT_FILTERS);
   }, [mode, active.q, run]);
 
-  /* ---------- chrome: sticky bar + "/" shortcut ---------- */
+  const handleToggleSave = useCallback(
+    (book: Book) => {
+      const wasSaved = isSaved(book.id);
+      const nowSaved = toggleSave(book);
+      if (nowSaved) {
+        setLastStamp("SAVED");
+      } else if (wasSaved) {
+        setLastStamp("ARCHIVED");
+      }
+      // Clear stamp after animation
+      setTimeout(() => setLastStamp(null), 1300);
+    },
+    [isSaved, toggleSave]
+  );
+
+  /* ---------- Chrome: sticky bar + "/" shortcut ---------- */
 
   useEffect(() => {
     const onScroll = () => {
-      const past = window.scrollY > 560;
+      const past = window.scrollY > 500;
       scrolledRef.current = past;
       setScrolled(past);
     };
@@ -194,10 +222,25 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  /* ---------- render ---------- */
+  // Unlock audio on first user interaction
+  useEffect(() => {
+    const handler = () => {
+      unlockAudio();
+      window.removeEventListener("click", handler);
+      window.removeEventListener("keydown", handler);
+    };
+    window.addEventListener("click", handler);
+    window.addEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("click", handler);
+      window.removeEventListener("keydown", handler);
+    };
+  }, []);
+
+  /* ---------- Render ---------- */
 
   return (
-    <div id="top" className="min-h-screen bg-paper font-body text-ink-900">
+    <div id="top" className={`min-h-screen bg-void font-body text-chrome ${perfMode ? "perf-mode" : ""}`}>
       <Masthead
         mode={mode}
         onMode={switchMode}
@@ -210,6 +253,8 @@ export default function App() {
           showToast("Recent searches cleared");
         }}
         inputRef={inputRef}
+        perfMode={perfMode}
+        onPerfMode={setPerfMode}
       />
 
       <StickyBar
@@ -238,18 +283,22 @@ export default function App() {
         onRetry={() => run(mode, active.q, page, filters)}
         onReset={resetFilters}
         onToast={showToast}
+        isSaved={isSaved}
+        onToggleSave={handleToggleSave}
       />
 
       <Info onToast={showToast} />
+
+      <LibraryCard count={savedCount} lastAction={lastStamp} />
 
       {toast && (
         <div
           key={toast.id}
           role="status"
-          className="animate-toast-in fixed bottom-6 right-6 z-[80] flex items-center gap-3 rounded-xl border border-ink-700 bg-ink-900 px-4 py-3 text-sm font-semibold text-paper shadow-[0_18px_50px_rgba(0,0,0,0.45)]"
+          className="animate-toast-in fixed bottom-4 left-4 z-[80] flex items-center gap-2.5 rounded-lg border border-neon-cyan/30 bg-void-2 px-3.5 py-2.5 text-xs font-semibold text-chrome-bright shadow-[0_0_20px_rgba(0,229,255,0.15)] sm:bottom-6 sm:left-6"
         >
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-moss/20 text-moss">
-            <IconCheck width={13} height={13} />
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-neon-lime/20 text-neon-lime">
+            <IconCheck width={11} height={11} />
           </span>
           {toast.msg}
         </div>
