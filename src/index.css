@@ -204,6 +204,23 @@ body {
   animation: wave 0.8s ease-in-out infinite;
 }
 
+/* Sinusoidal wave animation for library card audio */
+@keyframes wave-line {
+  0% {
+    d: path("M0,6 Q10,0 20,6 Q30,12 40,6 Q50,0 60,6 Q70,12 80,6 Q90,0 100,6 Q110,12 120,6 Q130,0 140,6 Q150,12 160,6");
+  }
+  50% {
+    d: path("M0,6 Q10,12 20,6 Q30,0 40,6 Q50,12 60,6 Q70,0 80,6 Q90,12 100,6 Q110,0 120,6 Q130,12 140,6 Q150,0 160,6");
+  }
+  100% {
+    d: path("M0,6 Q10,0 20,6 Q30,12 40,6 Q50,0 60,6 Q70,12 80,6 Q90,0 100,6 Q110,12 120,6 Q130,0 140,6 Q150,12 160,6");
+  }
+}
+
+.animate-wave-line path {
+  animation: wave-line 2s ease-in-out infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

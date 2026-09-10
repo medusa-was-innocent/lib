@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LogoMark, IconX, IconSparkle } from "./icons";
-import { playStampSound } from "../lib/sound";
+import { playStampSound, startAmbient, stopAmbient, isAmbientPlaying, unlockAudio } from "../lib/sound";
 import type { Book } from "../lib/api";
 import { annasUrl, googleBooksUrl, zLibraryUrl, searchBooks } from "../lib/api";
 
@@ -51,6 +51,7 @@ export function LibraryCard({
   const [dockY, setDockY] = useState(0);
   const [surpriseBook, setSurpriseBook] = useState<Book | null>(null);
   const [surpriseLoading, setSurpriseLoading] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
     dragging: boolean;
@@ -139,6 +140,23 @@ export function LibraryCard({
     }
   };
 
+  const toggleAudio = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    unlockAudio();
+    if (audioPlaying) {
+      stopAmbient();
+      setAudioPlaying(false);
+    } else {
+      startAmbient();
+      setAudioPlaying(true);
+    }
+  };
+
+  // Sync audio state on mount
+  useEffect(() => {
+    setAudioPlaying(isAmbientPlaying());
+  }, []);
+
   return (
     <div
       ref={cardRef}
@@ -166,6 +184,43 @@ export function LibraryCard({
             </div>
             <span className="font-mono text-[9px] text-moss">{count}</span>
           </div>
+
+          {/* Audio toggle - single line that becomes a wave */}
+          <button
+            type="button"
+            onClick={toggleAudio}
+            className="flex w-full items-center justify-center border-b border-ink-700/50 px-3 py-1.5 transition-colors hover:bg-ink-800/50"
+            title={audioPlaying ? "Pause ambient music" : "Play ambient music"}
+            aria-label={audioPlaying ? "Pause ambient music" : "Play ambient music"}
+          >
+            <svg
+              width="100%"
+              height="12"
+              viewBox="0 0 160 12"
+              preserveAspectRatio="none"
+              className={audioPlaying ? "animate-wave-line" : ""}
+            >
+              {audioPlaying ? (
+                <path
+                  d="M0,6 Q10,0 20,6 Q30,12 40,6 Q50,0 60,6 Q70,12 80,6 Q90,0 100,6 Q110,12 120,6 Q130,0 140,6 Q150,12 160,6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-acc"
+                />
+              ) : (
+                <line
+                  x1="0"
+                  y1="6"
+                  x2="160"
+                  y2="6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-[#7f95ab]"
+                />
+              )}
+            </svg>
+          </button>
 
           {/* Stats */}
           {!expanded && (

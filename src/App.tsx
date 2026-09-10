@@ -5,7 +5,6 @@ import { Masthead, StickyBar } from "./components/masthead";
 import { Results } from "./components/results";
 import { Info } from "./components/info";
 import { LibraryCard } from "./components/LibraryCard";
-import { AudioPlayer } from "./components/AudioPlayer";
 import { IconCheck } from "./components/icons";
 import { useDebouncedValue, usePerfMode, getCached, setCached } from "./lib/perf";
 import { useSavedBooks } from "./lib/storage";
@@ -242,7 +241,6 @@ export default function App() {
 
   return (
     <div id="top" className={`min-h-screen bg-paper font-body text-ink-900 ${perfMode ? "perf-mode" : ""}`}>
-      <AudioPlayer />
       <Masthead
         mode={mode}
         onMode={switchMode}
