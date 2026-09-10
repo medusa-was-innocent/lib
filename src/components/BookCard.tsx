@@ -22,6 +22,7 @@ import {
   IconSearch,
   IconSparkle,
 } from "./icons";
+import { BookDetailModal } from "./BookDetailModal";
 
 /* ---------- Cover with lazy loading + fallback ---------- */
 
@@ -161,6 +162,7 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
 
 function SimilarBookCard({ book }: { book: Book }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -206,28 +208,47 @@ function SimilarBookCard({ book }: { book: Book }) {
   ];
 
   return (
-    <div className={`relative flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)] ${menuOpen ? "z-30" : ""}`}>
-      <div className="relative h-[120px] w-full overflow-hidden rounded bg-ink-800">
-        {book.cover ? (
-          <img
-            src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-            alt={book.title}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-950">
-            <span className="font-display text-xl font-semibold text-acc">{book.title.charAt(0)}</span>
+    <>
+      <div className={`relative flex flex-col gap-1.5 rounded-lg border border-line bg-card p-2 transition-all hover:border-acc hover:shadow-[0_8px_20px_rgba(240,163,47,0.15)] ${menuOpen ? "z-30" : ""}`}>
+        <button
+          type="button"
+          onClick={() => setShowDetail(true)}
+          className="group/simcover relative cursor-pointer focus-ring"
+          aria-label={`View details for ${book.title}`}
+        >
+          <div className="relative h-[120px] w-full overflow-hidden rounded bg-ink-800">
+            {book.cover ? (
+              <img
+                src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                alt={book.title}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-ink-700 to-ink-950">
+                <span className="font-display text-xl font-semibold text-acc">{book.title.charAt(0)}</span>
+              </div>
+            )}
           </div>
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded bg-ink-950/0 transition-colors duration-200 group-hover/simcover:bg-ink-950/40">
+            <span className="rounded-full bg-acc px-2 py-0.5 font-mono text-[8px] font-bold uppercase tracking-wider text-ink-950 opacity-0 transition-opacity duration-200 group-hover/simcover:opacity-100">
+              View Info
+            </span>
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowDetail(true)}
+          className="text-left cursor-pointer focus-ring"
+        >
+          <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-ink-900 hover:text-royal-deep">
+            {book.title}
+          </p>
+        </button>
+        {book.authors[0] && (
+          <p className="truncate text-[9px] text-faint">{book.authors[0]}</p>
         )}
-      </div>
-      <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-ink-900">
-        {book.title}
-      </p>
-      {book.authors[0] && (
-        <p className="truncate text-[9px] text-faint">{book.authors[0]}</p>
-      )}
       {/* Compact download menu */}
       <div className="relative mt-1" ref={ref}>
         <button
@@ -262,6 +283,10 @@ function SimilarBookCard({ book }: { book: Book }) {
         )}
       </div>
     </div>
+    {showDetail && (
+      <BookDetailModal book={book} onClose={() => setShowDetail(false)} />
+    )}
+    </>
   );
 }
 
@@ -349,6 +374,7 @@ export function BookCard({
   onToggleSave: (b: Book) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
 
   const copyCite = async () => {
     try {
@@ -360,17 +386,36 @@ export function BookCard({
   };
 
   return (
-    <li
-      className={`book-lift card-contain row-in group relative grid grid-cols-[82px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[82px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
-        menuOpen ? "z-20" : ""
-      }`}
-      style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
-    >
-      <Cover book={book} />
-      <div className="min-w-0">
-        <h3 className="font-display text-[16px] font-semibold leading-snug text-ink-900 transition-colors group-hover:text-royal-deep">
-          {book.title}
-        </h3>
+    <>
+      <li
+        className={`book-lift card-contain row-in group relative grid grid-cols-[82px_1fr] gap-4 rounded-lg border border-line bg-card p-4 transition-colors hover:border-royal/40 sm:grid-cols-[82px_1fr_auto] sm:gap-5 sm:p-5 focus-within:border-royal/40 ${
+          menuOpen ? "z-20" : ""
+        }`}
+        style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
+      >
+        <button
+          type="button"
+          onClick={() => setShowDetail(true)}
+          className="group/cover relative cursor-pointer focus-ring"
+          aria-label={`View details for ${book.title}`}
+        >
+          <Cover book={book} />
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-[4px] bg-ink-950/0 transition-colors duration-200 group-hover/cover:bg-ink-950/40">
+            <span className="rounded-full bg-acc px-2 py-1 font-mono text-[9px] font-bold uppercase tracking-wider text-ink-950 opacity-0 transition-opacity duration-200 group-hover/cover:opacity-100">
+              View Info
+            </span>
+          </span>
+        </button>
+        <div className="min-w-0">
+          <h3 className="font-display text-[16px] font-semibold leading-snug text-ink-900 transition-colors group-hover:text-royal-deep">
+            <button
+              type="button"
+              onClick={() => setShowDetail(true)}
+              className="text-left cursor-pointer focus-ring"
+            >
+              {book.title}
+            </button>
+          </h3>
         {book.authors.length > 0 && (
           <p className="mt-0.5 text-sm font-medium text-body">{book.authors.slice(0, 4).join(", ")}</p>
         )}
@@ -426,5 +471,9 @@ export function BookCard({
         </div>
       </div>
     </li>
+    {showDetail && (
+      <BookDetailModal book={book} onClose={() => setShowDetail(false)} />
+    )}
+    </>
   );
 }

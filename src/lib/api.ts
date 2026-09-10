@@ -76,6 +76,63 @@ export async function searchBooks(
 }
 
 /** Fetch similar books by mining the subject + author of a seed book. */
+export type BookDetail = {
+  description?: string;
+  subjects: string[];
+  pages?: number;
+  firstSentence?: string;
+  links: { title: string; url: string }[];
+};
+
+/** Fetch detailed info (summary, subjects, etc.) for a book by its Open Library key. */
+export async function fetchBookDetail(
+  key: string,
+  signal?: AbortSignal
+): Promise<BookDetail | null> {
+  try {
+    const res = await fetch(`https://openlibrary.org${key}.json`, { signal });
+    if (!res.ok) return null;
+    const work = await res.json();
+
+    // Description can be a string or { type: "/type/text", value: "..." }
+    let description: string | undefined;
+    if (typeof work.description === "string") {
+      description = work.description;
+    } else if (work.description?.value) {
+      description = work.description.value;
+    }
+
+    // First sentence
+    let firstSentence: string | undefined;
+    if (typeof work.first_sentence === "string") {
+      firstSentence = work.first_sentence;
+    } else if (work.first_sentence?.value) {
+      firstSentence = work.first_sentence.value;
+    }
+
+    const subjects: string[] = Array.isArray(work.subjects)
+      ? work.subjects.slice(0, 12)
+      : [];
+
+    const links: { title: string; url: string }[] = Array.isArray(work.links)
+      ? work.links
+          .filter((l: any) => l.title && l.url)
+          .slice(0, 5)
+          .map((l: any) => ({ title: l.title, url: l.url }))
+      : [];
+
+    return {
+      description,
+      subjects,
+      pages: work.number_of_pages ?? undefined,
+      firstSentence,
+      links,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function searchSimilar(
   book: Book,
   signal?: AbortSignal
