@@ -159,11 +159,12 @@ export function BookDetailModal({
   );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink-950/80 p-4">
-      <div
-        ref={modalRef}
-        className="relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-line bg-card shadow-[0_20px_60px_rgba(12,31,49,0.4)]"
-      >
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-ink-950/80 p-4">
+      <div className="flex min-h-full items-center justify-center py-8">
+        <div
+          ref={modalRef}
+          className="relative w-full max-w-3xl rounded-2xl border border-line bg-card shadow-[0_20px_60px_rgba(12,31,49,0.4)]"
+        >
         {/* Close button */}
         <button
           type="button"
@@ -369,6 +370,7 @@ export function BookDetailModal({
 
 
         </div>
+      </div>
       </div>
     </div>
   );

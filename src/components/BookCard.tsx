@@ -213,7 +213,7 @@ function SimilarBookCard({ book }: { book: Book }) {
         <button
           type="button"
           onClick={() => setShowDetail(true)}
-          className="group/simcover relative cursor-pointer focus-ring"
+          className="group/simcover relative cursor-pointer overflow-hidden focus-ring"
           aria-label={`View details for ${book.title}`}
         >
           <div className="relative aspect-[2/3] w-full overflow-hidden rounded bg-ink-800">
@@ -397,7 +397,7 @@ export function BookCard({
     >        <button
           type="button"
           onClick={() => setShowDetail(true)}
-          className="group/cover relative cursor-pointer focus-ring"
+          className="group/cover relative cursor-pointer overflow-hidden focus-ring"
           aria-label={`View details for ${book.title}`}
         >
           <Cover book={book} />
