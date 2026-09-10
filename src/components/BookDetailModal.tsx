@@ -46,8 +46,23 @@ export function BookDetailModal({
   const [detail, setDetail] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const modalRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Initialize modal position (centered)
+  useEffect(() => {
+    if (modalRef.current) {
+      const rect = modalRef.current.getBoundingClientRect();
+      setPosition({
+        x: (window.innerWidth - rect.width) / 2,
+        y: Math.max(20, (window.innerHeight - rect.height) / 2),
+      });
+    }
+  }, []);
 
   // Fetch book details
   useEffect(() => {
@@ -86,22 +101,47 @@ export function BookDetailModal({
     };
   }, []);
 
-  // Close on click outside
+  // Drag handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!modalRef.current) return;
+    const rect = modalRef.current.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const newX = e.clientX - dragOffset.x;
+    const newY = e.clientY - dragOffset.y;
+    
+    // Keep modal within viewport bounds
+    const maxX = window.innerWidth - 100;
+    const maxY = window.innerHeight - 100;
+    
+    setPosition({
+      x: Math.max(0, Math.min(newX, maxX)),
+      y: Math.max(0, Math.min(newY, maxY)),
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Global mouse up handler to stop dragging even if mouse leaves modal
   useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-        onClose();
-      }
+    if (!isDragging) return;
+    
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
     };
-    // Delay to avoid immediate close
-    const t = setTimeout(() => {
-      window.addEventListener("click", onClick);
-    }, 100);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("click", onClick);
-    };
-  }, [onClose]);
+    
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+  }, [isDragging]);
 
   // Close menu on outside click
   useEffect(() => {
@@ -159,24 +199,55 @@ export function BookDetailModal({
   );
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-ink-950/80 p-4">
-      <div className="flex min-h-full items-center justify-center py-8">
+    <div 
+      className="fixed inset-0 z-[1000] bg-ink-950/60"
+      onClick={onClose}
+    >
+      <div
+        ref={modalRef}
+        className={`fixed flex flex-col rounded-2xl border border-line bg-card shadow-[0_20px_60px_rgba(12,31,49,0.4)] ${
+          isDragging ? 'cursor-grabbing' : ''
+        }`}
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          width: 'min(700px, calc(100vw - 40px))',
+          maxHeight: 'calc(100vh - 40px)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Draggable Header */}
         <div
-          ref={modalRef}
-          className="relative w-full max-w-3xl rounded-2xl border border-line bg-card shadow-[0_20px_60px_rgba(12,31,49,0.4)]"
+          ref={headerRef}
+          className={`flex items-center justify-between border-b border-line px-6 py-4 ${
+            isDragging ? 'cursor-grabbing' : 'cursor-grab'
+          }`}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
         >
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn-click absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-line bg-card text-faint transition-all hover:border-rust hover:text-rust"
-          aria-label="Close"
-        >
-          <IconX width={16} height={16} />
-        </button>
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-royal-soft">
+              <IconBook width={16} height={16} className="text-royal" />
+            </div>
+            <h2 className="font-display text-lg font-semibold text-ink-900">
+              Book Details
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn-click flex h-8 w-8 items-center justify-center rounded-full border border-line bg-card text-faint transition-all hover:border-rust hover:text-rust"
+            aria-label="Close"
+          >
+            <IconX width={16} height={16} />
+          </button>
+        </div>
 
-        {/* Header with cover and title */}
-        <div className="flex flex-col gap-5 border-b border-line p-6 sm:flex-row sm:gap-6">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Header with cover and title */}
+          <div className="flex flex-col gap-5 border-b border-line p-6 sm:flex-row sm:gap-6">
           {/* Large cover */}
           <div className="flex-shrink-0">
             {book.cover ? (
@@ -370,7 +441,7 @@ export function BookDetailModal({
 
 
         </div>
-      </div>
+        </div>
       </div>
     </div>
   );
