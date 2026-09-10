@@ -204,18 +204,18 @@ body {
   animation: wave 0.8s ease-in-out infinite;
 }
 
-/* Moving wave animation for library card audio */
-@keyframes wave-scroll {
-  from {
+/* Waving sine wave animation - continuous horizontal scroll */
+@keyframes wave-flow {
+  0% {
     transform: translateX(0);
   }
-  to {
-    transform: translateX(-80px);
+  100% {
+    transform: translateX(-40px);
   }
 }
 
 .animate-wave-line {
-  animation: wave-scroll 1.2s linear infinite;
+  animation: wave-flow 1s linear infinite;
 }
 
 /* Reduced motion */

@@ -198,12 +198,12 @@ export function LibraryCard({
               height="12"
               viewBox="0 0 160 12"
               preserveAspectRatio="none"
-              className="overflow-visible"
+              className="overflow-hidden"
             >
               {audioPlaying ? (
                 <g className={audioPlaying ? "animate-wave-line" : ""}>
                   <path
-                    d="M0,6 Q10,0 20,6 Q30,12 40,6 Q50,0 60,6 Q70,12 80,6 Q90,0 100,6 Q110,12 120,6 Q130,0 140,6 Q150,12 160,6 Q170,0 180,6 Q190,12 200,6 Q210,0 220,6 Q230,12 240,6"
+                    d="M0,6 Q5,0 10,6 Q15,12 20,6 Q25,0 30,6 Q35,12 40,6 Q45,0 50,6 Q55,12 60,6 Q65,0 70,6 Q75,12 80,6 Q85,0 90,6 Q95,12 100,6 Q105,0 110,6 Q115,12 120,6 Q125,0 130,6 Q135,12 140,6 Q145,0 150,6 Q155,12 160,6 Q165,0 170,6 Q175,12 180,6 Q185,0 190,6 Q195,12 200,6"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.5"
