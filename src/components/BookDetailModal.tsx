@@ -22,6 +22,20 @@ import {
 
 type MenuItem = { label: string; sub: string; href: string; icon: React.ReactNode };
 
+// Filter out "Contains" and "Also contained in" sections from descriptions
+function filterDescription(description: string): string {
+  // Remove "Contains:" section and everything after it until next section or end
+  let filtered = description.replace(/Contains:[\s\S]*?(?=\n\n[A-Z]|$)/g, "");
+  
+  // Remove "Also contained in:" section and everything after it
+  filtered = filtered.replace(/Also contained in:[\s\S]*?(?=\n\n[A-Z]|$)/g, "");
+  
+  // Clean up extra whitespace
+  filtered = filtered.replace(/\n{3,}/g, "\n\n").trim();
+  
+  return filtered;
+}
+
 export function BookDetailModal({
   book,
   onClose,
@@ -299,7 +313,7 @@ export function BookDetailModal({
                 Summary
               </h3>
               <p className="text-sm leading-relaxed text-body whitespace-pre-wrap">
-                {detail.description}
+                {filterDescription(detail.description)}
               </p>
             </div>
           ) : detail?.firstSentence ? (
