@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Book, BookDetail } from "../lib/api";
 import { fetchBookDetail } from "../lib/api";
@@ -103,7 +103,7 @@ export function BookDetailModal({
   }, []);
 
   // Drag handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (!modalRef.current) return;
     const rect = modalRef.current.getBoundingClientRect();
     setDragOffset({
@@ -111,9 +111,9 @@ export function BookDetailModal({
       y: e.clientY - rect.top,
     });
     setIsDragging(true);
-  };
+  }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isDragging) return;
     const newX = e.clientX - dragOffset.x;
     const newY = e.clientY - dragOffset.y;
@@ -126,11 +126,11 @@ export function BookDetailModal({
       x: Math.max(0, Math.min(newX, maxX)),
       y: Math.max(0, Math.min(newY, maxY)),
     });
-  };
+  }, [isDragging, dragOffset]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   // Global mouse up handler to stop dragging even if mouse leaves modal
   useEffect(() => {

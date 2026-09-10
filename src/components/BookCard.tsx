@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import type { Book } from "../lib/api";
 import {
   annasUrl,
@@ -160,7 +160,7 @@ function DownloadMenu({ book, open, setOpen }: { book: Book; open: boolean; setO
 
 /* ---------- Similar books section ---------- */
 
-function SimilarBookCard({ book }: { book: Book }) {
+const SimilarBookCard = memo(function SimilarBookCard({ book }: { book: Book }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -290,7 +290,7 @@ function SimilarBookCard({ book }: { book: Book }) {
     )}
     </>
   );
-}
+});
 
 function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => void }) {
   const [open, setOpen] = useState(false);
@@ -336,7 +336,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
       </button>
 
       {open && (
-        <div className="similar-expand mt-3 overflow-visible">
+        <div className="similar-expand mt-3 overflow-visible" style={{ contentVisibility: 'auto' }}>
           <div className="grid grid-cols-3 gap-3 items-stretch sm:grid-cols-4 md:grid-cols-6">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
@@ -362,7 +362,7 @@ function SimilarBooks({ seed, onToast }: { seed: Book; onToast: (m: string) => v
 
 /* ---------- Main BookCard ---------- */
 
-export function BookCard({
+export const BookCard = memo(function BookCard({
   book,
   index,
   onToast,
@@ -494,4 +494,4 @@ export function BookCard({
     )}
     </>
   );
-}
+});
